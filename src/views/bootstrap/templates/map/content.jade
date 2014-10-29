@@ -1,9 +1,24 @@
-.container(style="min-height: 400px;")
+.container(style="min-height: 200px;")
   .page-header
-    h1 Links
-  div(ng-show="html && authenticated", ng-model="links", ui-ace="{mode: 'html'}")
-  div(ng-show="authenticated", medium-editor, ng-model="links", options='{"buttons": ["bold", "italic", "underline", "anchor", "header1" , "header2", "quote", "orderedlist", "unorderedlist"]}', bind-options="mediumBindOptions")
-  div(ng-bind-html="links", ng-hide="authenticated")
+    h1 Karte
+  ui-chart(series='data', options='options', title='Tokyo climate')
+    y-axis(title='Temperature')
+      labels
+        span {{ value }}°C
+    y-axis(opposite='opposite', title='Rainfall')
+      labels
+        span {{ value }} mm
+    tooltip(use-html='use-html')
+      span(ng-show='series.name == \'Rainfall\'') {{ x }}: {{ y }} mm
+      span(ng-show='series.name == \'Temperature\'') {{ x }}: {{ y }}°C
+      span(ng-show='series.name == \'Sunshine\'')
+        b {{ point.name }}
+        | {{ y }}
+  ui-map(series='mapSeries', options='mapOptions', title='Showing only non-null areas', subtitle="The <em>allAreas</em> option is false")
+    y-axis
+    x-axis
+  //- div(slider, ng-model="slider.single", start=1, end=10)
+  div(slider, ng-from="slider.from", ng-to="slider.to", start=0, end=100, step=5)
 nav.navbar.navbar-inverse.navbar-fixed-bottom(role="administration", ng-show="$root.authenticated")
   .container
     .navbar-left
@@ -16,7 +31,7 @@ nav.navbar.navbar-inverse.navbar-fixed-bottom(role="administration", ng-show="$r
           i.fa.fa-download
         button.btn.btn-success.navbar-btn(ng-if="refresh", title="Aktualisieren", ng-click="refresh()")
           i.fa.fa-refresh
-        button.btn.btn-success.navbar-btn(ng-if="toogleHtml", title="HTML-Modus umschalten", ng-click="toogleHtml()")
+        button.btn.btn-default.navbar-btn(ng-if="toogleHtml", title="HTML-Modus umschalten", ng-click="toogleHtml()")
           | HTML
         button.btn.btn-primary.navbar-btn(ng-if="save", title="Speichern", ng-click="save()")
           i.fa.fa-floppy-o

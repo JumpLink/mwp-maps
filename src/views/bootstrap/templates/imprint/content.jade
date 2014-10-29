@@ -7,8 +7,8 @@
             a(ng-click="goTo('imprint')") Impressum
           li(data-target="#contact", bs-scrollspy, data-offset="30")
             a(ng-click="goTo('contact')") Kontakt
-          li(data-target="#approach", bs-scrollspy, data-offset="30")
-            a(ng-click="goTo('approach')") Anfahrt
+          //- li(data-target="#approach", bs-scrollspy, data-offset="30")
+          //-   a(ng-click="goTo('approach')") Anfahrt
     .col-md-10
       h1.anchor-static-navbar#imprint
       .page-header
@@ -63,12 +63,12 @@
           span.form-control-feedback(ng-hide="form.content.$error.required", title="Alles Okay!"): i.fa.fa-check
           span.form-control-feedback(ng-show="form.content.$error.required", title="Bitte geben Sie hier Ihre Nachricht ein."): i.fa.fa-exclamation-triangle
         button.btn.btn-primary(type="submit", ng-disabled="form.$invalid") Absenden
-      h1.anchor-static-navbar#approach
-      .page-header
-        h1 Anfahrt
-      .row
-        .col-xs-12
-          leaflet(center="nvc", markers="markers", height="480px", width="100%")
+      //- h1.anchor-static-navbar#approach
+      //- .page-header
+      //-   h1 Anfahrt
+      //- .row
+      //-   .col-xs-12
+      //-     leaflet(center="nvc", markers="markers", height="480px", width="100%")
 nav.navbar.navbar-inverse.navbar-fixed-bottom(role="administration", ng-show="$root.authenticated")
   .container
     .navbar-left

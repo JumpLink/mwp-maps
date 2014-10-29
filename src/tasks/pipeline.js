@@ -29,20 +29,20 @@ var jsFilesToInject = [
   //- es5-shim: ECMAScript 5 compatibility shims for legacy JavaScript engines: https://github.com/es-shims/es5-shim
   "/third-party/es5-shim/es5-shim.js",
   "/third-party/es5-shim/es5-sham.js",
-
-  //- angular-masonry
   "/third-party/jquery/dist/jquery.js",
   "/third-party/jquery-bridget/jquery.bridget.js",
-  "/third-party/get-style-property/get-style-property.js",
-  "/third-party/get-size/get-size.js",
-  "/third-party/eventEmitter/EventEmitter.js",
-  "/third-party/eventie/eventie.js",
-  "/third-party/doc-ready/doc-ready.js",
-  "/third-party/matches-selector/matches-selector.js",
-  "/third-party/outlayer/item.js",
-  "/third-party/outlayer/outlayer.js",
-  "/third-party/masonry/masonry.js",
-  "/third-party/imagesloaded/imagesloaded.js",
+
+  //- angular-masonry
+  // "/third-party/get-style-property/get-style-property.js",
+  // "/third-party/get-size/get-size.js",
+  // "/third-party/eventEmitter/EventEmitter.js",
+  // "/third-party/eventie/eventie.js",
+  // "/third-party/doc-ready/doc-ready.js",
+  // "/third-party/matches-selector/matches-selector.js",
+  // "/third-party/outlayer/item.js",
+  // "/third-party/outlayer/outlayer.js",
+  // "/third-party/masonry/masonry.js",
+  // "/third-party/imagesloaded/imagesloaded.js",
 
   //- angular
   "/third-party/angular/angular.js",
@@ -72,7 +72,7 @@ var jsFilesToInject = [
   "/third-party/angular-ui-ace/ui-ace.js",
 
   //- angular-masonry
-  "/third-party/angular-masonry/angular-masonry.js",
+  // "/third-party/angular-masonry/angular-masonry.js",
 
   //- html, css, javascript beautifier
   "/third-party/js-beautify/js/lib/beautify.js",
@@ -96,12 +96,36 @@ var jsFilesToInject = [
   //- angular-file-upload: https://github.com/nervgh/angular-file-upload
   "/third-party/angular-file-upload/angular-file-upload.js",
 
+  // angular-nouislider: https://github.com/vasyabigi/angular-nouislider
+  "/third-party/nouislider/jquery.nouislider.js",
+  "/third-party/nouislider/Link.js",
+  "/third-party/angular-nouislider/src/nouislider.js",
+
+  // HighchartsJS powered charts directives for Angular: https://github.com/gevgeny/ui-highcharts
+  "/third-party/highcharts-release/highcharts.src.js",
+  // FIXME "/third-party/highcharts-release/modules/canvas-tools.src.js",
+  "/third-party/highcharts-release/modules/data.src.js",
+  "/third-party/highcharts-release/modules/drilldown.src.js",
+  "/third-party/highcharts-release/modules/exporting.src.js",
+  "/third-party/highcharts-release/modules/funnel.src.js",
+  "/third-party/highcharts-release/modules/heatmap.src.js",
+  "/third-party/highcharts-release/modules/no-data-to-display.src.js",
+  // FIXME "/third-party/highcharts-release/modules/solid-gauge.src.js",
+  // FIXME "/third-party/highstock-release/highstock.src.js",
+  "/third-party/highmaps-release/modules/map.src.js",
+  "/third-party/ui-highcharts/dist/ui-highcharts.js",
+
+  // angular-load: Dynamically load scripts and css stylesheets in your Angular.JS app: https://github.com/urish/angular-load
+  "/third-party/angular-load/angular-load.js",
+
   //- Bring in the socket.io client
   "/js/dependencies/socket.io.js",
   //- then beef it up with some convenience logic for talking to Sails.js'
   "/third-party/sails.io.js/sails.io.js",
   //- and for angular
   "/third-party/angularSails/dist/ngsails.io.js",
+
+
 
   "/js/app.js",
   "/js/bootstrap.js",
@@ -110,7 +134,7 @@ var jsFilesToInject = [
   "/js/controllers.js",
   "/js/bootstrap/controllers.js",
   "/js/bootstrap/directives.js",
-  "/js/directives/*",
+  "/js/directives/*.js",
 ];
 
 

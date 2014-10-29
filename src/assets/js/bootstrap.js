@@ -7,7 +7,7 @@ jumplink.cms = angular.module('jumplink.cms', [
   , 'FBAngular'               // angular-fullscreen: https://github.com/fabiobiondi/angular-fullscreen
   , 'mgcrea.ngStrap'          // AngularJS 1.2+ native directives for Bootstrap 3: http://mgcrea.github.io/angular-strap/
   , 'angularMoment'           // Angular.JS directive and filters for Moment.JS: https://github.com/urish/angular-moment
-  , 'wu.masonry'              // A directive to use masonry with AngularJS: http://passy.github.io/angular-masonry/
+  // , 'wu.masonry'              // A directive to use masonry with AngularJS: http://passy.github.io/angular-masonry/
   , 'angular-carousel'        // An AngularJS carousel implementation optimised for mobile devices: https://github.com/revolunet/angular-carousel
   // , 'textAngular'             // A radically powerful Text-Editor/Wysiwyg editor for Angular.js: https://github.com/fraywing/textAngular
   , 'angular-medium-editor'   // AngularJS directive for Medium.com editor clone: https://github.com/thijsw/angular-medium-editor
@@ -16,6 +16,9 @@ jumplink.cms = angular.module('jumplink.cms', [
   , 'toaster'                 // AngularJS Toaster is a customized version of "toastr" non-blocking notification javascript library: https://github.com/jirikavi/AngularJS-Toaster
   , 'angularFileUpload'       // Angular File Upload is a module for the AngularJS framework: https://github.com/nervgh/angular-file-upload
   , 'angular-filters'         // Useful filters for AngularJS: https://github.com/niemyjski/angular-filters
+  , 'nouislider'              // angular-nouislider - Simple angular directive for jquery nouislider plugin: https://github.com/vasyabigi/angular-nouislider
+  , 'ui-highcharts'           // HighchartsJS powered charts directives for Angular: https://github.com/gevgeny/ui-highcharts
+  , 'angularLoad'             // angular-load: Dynamically load scripts and css stylesheets in your Angular.JS app: https://github.com/urish/angular-load
 ]);
 
 jumplink.cms.config( function($stateProvider, $urlRouterProvider, $locationProvider) {
@@ -62,122 +65,13 @@ jumplink.cms.config( function($stateProvider, $urlRouterProvider, $locationProvi
       }
     }
   })
-  // gallery
-  .state('bootstrap-layout.gallery', {
-    url: '/gallery'
-    , resolve:{
-      images: function($sailsSocket) {
-        return $sailsSocket.get('/gallery').then (function (data) {
-          return data.data;
-        });
-      }
-    }
+  // map
+  .state('bootstrap-layout.map', {
+    url: '/map'
     , views: {
       'content' : {
-        templateUrl: 'bootstrap/gallery/content'
-        , controller: 'GalleryContentController'
-      }
-      , 'toolbar' : {
-        templateUrl: 'bootstrap/toolbar'
-        , controller: 'ToolbarController'
-      }
-      , 'footer' : {
-        templateUrl: 'bootstrap/footer'
-        , controller: 'FooterController'
-      }
-    }
-  })
-  // gallery slideshow
-  .state('bootstrap-layout.gallery-slider', {
-    url: '/slider/:slideIndex'
-    , resolve:{
-      images: function($sailsSocket) {
-        return $sailsSocket.get('/gallery').then (function (data) {
-          return data.data;
-        });
-      }
-    }
-    , views: {
-      'content' : {
-        templateUrl: 'bootstrap/gallery/slider'
-        , controller: 'GallerySlideController'
-      }
-      , 'toolbar' : {
-        templateUrl: 'bootstrap/gallery/toolbar'
-        , controller: 'ToolbarController'
-      }
-    }
-  })
-  // events timeline
-  .state('bootstrap-layout.timeline', {
-    url: '/events'
-    , resolve:{
-      events: function($sailsSocket, eventService) {
-        return $sailsSocket.get('/timeline').then (function (data) {
-          return eventService.split(data.data);
-        });
-      }
-    }
-    , views: {
-      'content' : {
-        templateUrl: 'bootstrap/events/timeline'
-        , controller: 'TimelineController'
-      }
-      , 'toolbar' : {
-        templateUrl: 'bootstrap/toolbar'
-        , controller: 'ToolbarController'
-      }
-      , 'footer' : {
-        templateUrl: 'bootstrap/footer'
-        , controller: 'FooterController'
-      }
-    }
-  })
-  // members
-  .state('bootstrap-layout.members', {
-    url: '/members'
-    , resolve:{
-      members: function($sailsSocket, $filter) {
-        return $sailsSocket.get('/member').then (function (data) {
-          return $filter('orderBy')(data.data, 'position');
-        });
-      }
-    }
-    , views: {
-      'content' : {
-        templateUrl: 'bootstrap/members/content'
-        , controller: 'MembersController'
-      }
-      , 'toolbar' : {
-        templateUrl: 'bootstrap/toolbar'
-        , controller: 'ToolbarController'
-      }
-      , 'footer' : {
-        templateUrl: 'bootstrap/footer'
-        , controller: 'FooterController'
-      }
-      // 'adminbar': {
-      //   templateUrl: 'bootstrap/adminbar'
-      // }
-    }
-  })
-  // application
-  .state('bootstrap-layout.application', {
-    url: '/application'
-    , resolve:{
-      application: function($sailsSocket) {
-        return $sailsSocket.get('/content?name=application', {name: 'application'}).then (function (data) {
-          if(angular.isDefined(data) && angular.isDefined(data.data[0]) && angular.isDefined(data.data[0].content))
-            return html_beautify(data.data[0].content);
-          else
-            return '';
-        });
-      }
-    }
-    , views: {
-      'content' : {
-        templateUrl: 'bootstrap/application/content'
-        , controller: 'ApplicationController'
+        templateUrl: 'bootstrap/map/content'
+        , controller: 'MapController'
       }
       , 'toolbar' : {
         templateUrl: 'bootstrap/toolbar'
@@ -203,31 +97,6 @@ jumplink.cms.config( function($stateProvider, $urlRouterProvider, $locationProvi
       'content' : {
         templateUrl: 'bootstrap/imprint/content'
         , controller: 'ImprintController'
-      }
-      , 'toolbar' : {
-        templateUrl: 'bootstrap/toolbar'
-        , controller: 'ToolbarController'
-      }
-      , 'footer' : {
-        templateUrl: 'bootstrap/footer'
-        , controller: 'FooterController'
-      }
-    }
-  })
-  // links
-  .state('bootstrap-layout.links', {
-    url: '/links'
-    , resolve:{
-      links: function($sailsSocket) {
-        return $sailsSocket.get('/content?name=links', {name: 'links'}).then (function (data) {
-          return html_beautify(data.data[0].content);
-        });
-      }
-    }
-    , views: {
-      'content' : {
-        templateUrl: 'bootstrap/links/content'
-        , controller: 'LinksController'
       }
       , 'toolbar' : {
         templateUrl: 'bootstrap/toolbar'

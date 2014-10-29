@@ -151,7 +151,7 @@ module.exports = function(grunt) {
 			options: {
 				startTag: '// SCRIPTS',
 				endTag: '// SCRIPTS END',
-				fileTmpl: 'script(src="%s")',
+				fileTmpl: 'script(type="text/javascript", charset="utf-8", src="%s")',
 				appRoot: '.tmp/public'
 			},
 			files: {
@@ -163,7 +163,7 @@ module.exports = function(grunt) {
 			options: {
 				startTag: '// SCRIPTS',
 				endTag: '// SCRIPTS END',
-				fileTmpl: 'script(src="%s")',
+				fileTmpl: 'script(type="text/javascript", charset="utf-8", src="%s")',
 				appRoot: '.tmp/public',
 				relative: true
 			},
@@ -176,7 +176,7 @@ module.exports = function(grunt) {
 			options: {
 				startTag: '// SCRIPTS',
 				endTag: '// SCRIPTS END',
-				fileTmpl: 'script(src="%s")',
+				fileTmpl: 'script(type="text/javascript", charset="utf-8", src="%s")',
 				appRoot: '.tmp/public'
 			},
 			files: {
@@ -188,7 +188,7 @@ module.exports = function(grunt) {
 			options: {
 				startTag: '// SCRIPTS',
 				endTag: '// SCRIPTS END',
-				fileTmpl: 'script(src="%s")',
+				fileTmpl: 'script(type="text/javascript", charset="utf-8", src="%s")',
 				appRoot: '.tmp/public',
 				relative: true
 			},
