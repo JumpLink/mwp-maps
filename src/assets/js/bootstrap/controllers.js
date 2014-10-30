@@ -276,8 +276,6 @@ jumplink.cms.controller('MapController', function($rootScope, $scope, $sailsSock
   });
   var editMemberModal = $modal({scope: $scope, title: 'Person bearbeiten', uploader: $scope.uploader, template: 'bootstrap/map/editmembermodal', show: false});
 
-
-
   $sailsSocket.subscribe('map', function(msg){
     $log.debug(msg);
 
@@ -304,94 +302,120 @@ jumplink.cms.controller('MapController', function($rootScope, $scope, $sailsSock
       break;
     }
   });
-  $scope.data = [{
-    name : 'Rainfall',
-    type : 'column',
-    yAxis : 1,
-    data : [49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
-  }, {
-    name : 'Temperature',
-    type : 'spline',
-    data : [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6]
-  }, {
-    name : 'Sunshine',
-    type : 'pie',
-    data : [{
-      y : 2020,
-      name : 'Sunshine hours',
-      sliced : true
-    }, {
-      y : 6740,
-      name : 'Non sunshine hours (including night)',
-      dataLabels: { enabled: false }
-    }],
-    center : [70, 45],
-    size : 80
-  }];
-
-  $scope.options = {
-    chart: {
-      spacing: 40,
-      height: 360
-    },
-    legend : {
-      enabled : false
-    },
-    xAxis : [{
-      categories : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-    }]
-  };
 
   // Prepare demo data
   var data = [{
-      'hc-key': 'us',
-      value: 3
+    'hc-key': 'de',
+    value: 3
   }, {
-      'hc-key': 'ca',
-      value: 5
+    'hc-key': 'fr',
+    value: 5
   }, {
-      'hc-key': 'mx',
-      value: 20
+    'hc-key': 'nl',
+    value: 20
   }];
 
-  $scope.mapOptions = {
+  var mapOptions = {
     mapNavigation: {
-        enabled: false,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
+      enabled: true,
+      enableMouseWheelZoom: true,
+      buttonOptions: {
+          verticalAlign: 'bottom'
+      }
     },
-
     colorAxis: {
-        min: 0
+      min: 0
+    },
+    labels: {
+      style: {
+        color: '#3E576F'
+      }
     }
   }
 
-    // script(type="text/javascript", charset="utf-8", src="http://code.highcharts.com/mapdata/custom/world.js")
-    // script(type="text/javascript", charset="utf-8", src="")
+  $scope.highchartsNgConfig = {
+    useHighMaps: true,
+    //Whether to use HighStocks instead of HighCharts (optional). Defaults to false.
+    useHighStocks: false,
+    //This is not a highcharts object. It just looks a little like one!
+    options: mapOptions,
 
-  angularLoad.loadScript('http://code.highcharts.com/mapdata/custom/north-america-no-central.js').then(function() {
+    //The below properties are watched separately for changes.
 
-    $scope.mapSeries = [{
-      data: data,
-      mapData: Highcharts.maps['custom/north-america-no-central'],
-      joinBy: 'hc-key',
-      allAreas: false,
-      name: 'Random data',
-      states: {
+    //Series object (optional) - a list of series using normal highcharts series options.
+    series: [],
+    //Title configuration (optional)
+    title: {
+      text: 'Test'
+    },
+    //Boolean to control showng loading status on chart (optional)
+    loading: false,
+    //Configuration for the xAxis (optional). Currently only one x axis can be dynamically controlled.
+    //properties currentMin and currentMax provied 2-way binding to the chart's maximimum and minimum
+    xAxis: {
+
+    },
+    yAxis: {
+
+    },
+
+    //size (optional) if left out the chart will default to size of the div or something sensible.
+    size: {
+      width: $rootScope.windowWidth - 60, // without grid layout padding
+      height: $rootScope.windowHeight - 70 // without navbar and padding
+    },
+    //function (optional)
+    func: function (chart) {
+      //setup some logic for the chart
+      console.log(chart);
+
+    }
+
+  };
+
+  var loadSeries = function (mapKey, nutLevel) {
+
+
+    $scope.highchartsNgConfig.series = [];
+
+    angularLoad.loadScript('http://code.highcharts.com/mapdata/'+mapKey+'.js').then(function() {
+      $scope.highchartsNgConfig.series.push({
+        data: data,
+        mapData: Highcharts.maps[mapKey],
+        joinBy: 'hc-key',
+        allAreas: true,
+        name: 'Random data',
+        states: {
           hover: {
-              color: '#BADA55'
+            color: '#BADA55'
           }
-      },
-      dataLabels: {
+        },
+        dataLabels: {
           enabled: true,
           format: '{point.name}'
-      }
-    }];
+        },
+        point: {
+          events: {
+            // On click, look for a detailed map
+            click: function () {
+              var key = this['hc-key'];
+              console.log("key", this, key);
+              var mapKey = 'countries/' + key.substr(0, 2) + '/' + key + '-all';
+              loadSeries(mapKey);
+            }
+          }
+        }
+      });
 
-  }).catch(function() {
-    $log.error("can't load http://code.highcharts.com/mapdata/custom/north-america-no-central.js");
-  });
+    }).catch(function() {
+      $log.error("can't load http://code.highcharts.com/mapdata/custom/north-america-no-central.js");
+    });
+  }
+
+  loadSeries('custom/europe');
+
+
+
 
   $scope.slider = {from:0, to:100, single: 50};
 

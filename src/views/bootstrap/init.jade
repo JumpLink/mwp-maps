@@ -2,7 +2,7 @@ doctype html
 html(lang="en", ng-app="jumplink.cms", ng-controller="AppController", ng-init="$root.authenticated = #{authenticated}; $root.user = #{user}")
   head
     base(href="/bootstrap")
-    title Nautischer Verein Cuxhaven
+    title MWP Maps
 
     //- Viewport mobile tag for sensible mobile support
     meta(name="viewport",content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no")
@@ -18,6 +18,7 @@ html(lang="en", ng-app="jumplink.cms", ng-controller="AppController", ng-init="$
     script(type="text/ng-template", id="bootstrap/toolbar"): include ./templates/toolbar.jade
     script(type="text/ng-template", id="bootstrap/footer"): include ./templates/footer.jade
     script(type="text/ng-template", id="bootstrap/sidebar"): include ./templates/sidebar.jade
+    script(type="text/ng-template", id="bootstrap/rightsidebar"): include ./templates/rightsidebar.jade
     script(type="text/ng-template", id="bootstrap/adminbar"): include ./templates/adminbar.jade
     script(type="text/ng-template", id="bootstrap/datepicker"): include ./templates/datepicker.jade
     script(type="text/ng-template", id="bootstrap/timepicker"): include ./templates/timepicker.jade
@@ -84,6 +85,7 @@ html(lang="en", ng-app="jumplink.cms", ng-controller="AppController", ng-init="$
     script(type="text/javascript", charset="utf-8", src="/third-party/highcharts-release/modules/no-data-to-display.src.js")
     script(type="text/javascript", charset="utf-8", src="/third-party/highmaps-release/modules/map.src.js")
     script(type="text/javascript", charset="utf-8", src="/third-party/ui-highcharts/dist/ui-highcharts.js")
+    script(type="text/javascript", charset="utf-8", src="/third-party/highcharts-ng/src/highcharts-ng.js")
     script(type="text/javascript", charset="utf-8", src="/third-party/angular-load/angular-load.js")
     script(type="text/javascript", charset="utf-8", src="/js/dependencies/socket.io.js")
     script(type="text/javascript", charset="utf-8", src="/third-party/sails.io.js/sails.io.js")

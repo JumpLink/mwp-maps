@@ -114,6 +114,8 @@ var jsFilesToInject = [
   // FIXME "/third-party/highstock-release/highstock.src.js",
   "/third-party/highmaps-release/modules/map.src.js",
   "/third-party/ui-highcharts/dist/ui-highcharts.js",
+  // Alternative directive
+  "/third-party/highcharts-ng/src/highcharts-ng.js",
 
   // angular-load: Dynamically load scripts and css stylesheets in your Angular.JS app: https://github.com/urish/angular-load
   "/third-party/angular-load/angular-load.js",

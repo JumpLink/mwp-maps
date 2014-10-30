@@ -42,7 +42,8 @@
     "highstock-release": "~2.0.4",
     "highmaps-release": "~1.0.4",
     "highcharts-release": "~4.0.4",
-    "angular-load": "~0.2.0"
+    "angular-load": "~0.2.0",
+    "highcharts-ng": "hanneskaeufler/highcharts-ng#hk-highmaps"
   },
   "resolutions": {
     "angular": "1.2.26",

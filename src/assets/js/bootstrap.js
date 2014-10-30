@@ -18,6 +18,7 @@ jumplink.cms = angular.module('jumplink.cms', [
   , 'angular-filters'         // Useful filters for AngularJS: https://github.com/niemyjski/angular-filters
   , 'nouislider'              // angular-nouislider - Simple angular directive for jquery nouislider plugin: https://github.com/vasyabigi/angular-nouislider
   , 'ui-highcharts'           // HighchartsJS powered charts directives for Angular: https://github.com/gevgeny/ui-highcharts
+  , 'highcharts-ng'           // Alternative AngularJS directive for Highcharts: https://github.com/hanneskaeufler/highcharts-ng/tree/hk-highmaps
   , 'angularLoad'             // angular-load: Dynamically load scripts and css stylesheets in your Angular.JS app: https://github.com/urish/angular-load
 ]);
 
