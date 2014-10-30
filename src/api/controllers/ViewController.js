@@ -323,9 +323,9 @@ var singlePageBootstrap = function(req, res, next) {
     ok(req, res, next, force);
   } else {
     if(force != null)
-      res.redirect('/bs/legacy/home?force='+force);
+      res.redirect('/bs/legacy/browser?force='+force);
     else
-      res.redirect('/bs/legacy/home');
+      res.redirect('/bs/legacy/browser');
   }
 
 };
@@ -371,9 +371,9 @@ module.exports = {
       ok(req, res, next);
     } else {
       if(force != null)
-        res.redirect('/bs/legacy/home?force='+force);
+        res.redirect('/bs/legacy/browser?force='+force);
       else
-        res.redirect('/bs/legacy/home');
+        res.redirect('/bs/legacy/browser');
     }
 
   }
