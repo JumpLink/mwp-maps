@@ -12,12 +12,16 @@
         a(ui-sref='bootstrap-layout.home') Startseite
       li(data-match-route='/*map*')
         a(ui-sref='bootstrap-layout.map') Karte
+      li(data-match-route='/*database*')
+        a(ui-sref='bootstrap-layout.database') Datenbank
+      li(data-match-route='/*admin*', title="Einstellungen", bs-dropdown="adminSettingDropdown", data-template="bootstrap/dropdown", data-placement="bottom-left", data-html="true")
+        a Einstellungen
       li(data-match-route='/*imprint*')
         a(ui-sref='bootstrap-layout.imprint') Impressum
     .navbar-right
       .btn-group
-        button.btn.btn-primary.navbar-btn(ng-if="$root.fullscreenIsSupported", ng-click="toggleFullscreen()", style="font-size: 14px; margin-left: 15px;")
+        button.btn.btn-primary.navbar-btn(ng-if="$root.fullscreenIsSupported", ng-click="toggleFullscreen()")
           i.fa.fa-expand(ng-hide="isFullscreen", title="Vollbild")
           i.fa.fa-compress(ng-show="isFullscreen", title="Vollbild verlassen")
-        button.btn.btn-primary.navbar-btn(type="button", bs-aside="aside", data-template="bootstrap/rightsidebar", data-title="Einstellungen", data-placement="right", data-animation="am-slide-right", data-container=".main-body")
+        button.btn.btn-primary.navbar-btn(title="Seiteneinstellungen", type="button", bs-aside="aside", data-template="bootstrap/rightsidebar", data-title="Einstellungen", data-placement="right", data-animation="am-slide-right", data-container=".main-body")
           i.fa.fa-ellipsis-v

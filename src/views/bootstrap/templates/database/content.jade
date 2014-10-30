@@ -1,7 +1,32 @@
+#top(style="margin-top: -20px;width: 100%;")
 .container-fluid(style="min-height: 200px;")
   .row
     .col-xs-12
-      #chart1(highchart, data-chart="chart", config="highchartsNgConfig")
+      .page-header
+        h1 Datenbank
+      table.table.table-hover.table-condensed
+        thead
+            tr
+              th id
+              th district
+              th district_name
+              th number
+              th nuts3
+              th nuts2
+              th nuts1
+              th nuts0
+              th region_name
+          tbody
+            tr(ng-repeat="data in mapDatabase")
+              td {{data.id}}
+              td {{data.district}}
+              td {{data.district_name}}
+              td {{data.number}}
+              td {{data.nuts3}}
+              td {{data.nuts2}}
+              td {{data.nuts1}}
+              td {{data.nuts0}}
+              td {{data.region_name}}
 nav.navbar.navbar-inverse.navbar-fixed-bottom(role="administration", ng-show="$root.authenticated")
   .container
     .navbar-left
@@ -14,7 +39,7 @@ nav.navbar.navbar-inverse.navbar-fixed-bottom(role="administration", ng-show="$r
           i.fa.fa-download
         button.btn.btn-success.navbar-btn(ng-if="refresh", title="Aktualisieren", ng-click="refresh()")
           i.fa.fa-refresh
-        button.btn.btn-default.navbar-btn(ng-if="toogleHtml", title="HTML-Modus umschalten", ng-click="toogleHtml()")
+        button.btn.btn-success.navbar-btn(ng-if="toogleHtml", title="HTML-Modus umschalten", ng-click="toogleHtml()")
           | HTML
         button.btn.btn-primary.navbar-btn(ng-if="save", title="Speichern", ng-click="save()")
           i.fa.fa-floppy-o

@@ -60,10 +60,10 @@ jumplink.cms.config( function($stateProvider, $urlRouterProvider, $locationProvi
         templateUrl: 'bootstrap/toolbar'
         , controller: 'ToolbarController'
       }
-      , 'footer' : {
-        templateUrl: 'bootstrap/footer'
-        , controller: 'FooterController'
-      }
+      // , 'footer' : {
+      //   templateUrl: 'bootstrap/footer'
+      //   , controller: 'FooterController'
+      // }
     }
   })
   // map
@@ -78,9 +78,29 @@ jumplink.cms.config( function($stateProvider, $urlRouterProvider, $locationProvi
         templateUrl: 'bootstrap/toolbar'
         , controller: 'ToolbarController'
       }
-      , 'footer' : {
-        templateUrl: 'bootstrap/footer'
-        , controller: 'FooterController'
+      // , 'footer' : {
+      //   templateUrl: 'bootstrap/footer'
+      //   , controller: 'FooterController'
+      // }
+    }
+  })
+  .state('bootstrap-layout.database', {
+    url: '/database'
+    , resolve:{
+      mapDatabase: function($sailsSocket) {
+        return $sailsSocket.get('/map?limit=0', {}).then (function (data) {
+          return data.data;
+        });
+      }
+    }
+    , views: {
+      'content' : {
+        templateUrl: 'bootstrap/database/content'
+        , controller: 'DatabaseController'
+      }
+      , 'toolbar' : {
+        templateUrl: 'bootstrap/toolbar'
+        , controller: 'ToolbarController'
       }
     }
   })
@@ -103,10 +123,10 @@ jumplink.cms.config( function($stateProvider, $urlRouterProvider, $locationProvi
         templateUrl: 'bootstrap/toolbar'
         , controller: 'ToolbarController'
       }
-      , 'footer' : {
-        templateUrl: 'bootstrap/footer'
-        , controller: 'FooterController'
-      }
+      // , 'footer' : {
+      //   templateUrl: 'bootstrap/footer'
+      //   , controller: 'FooterController'
+      // }
     }
   })
   // administration

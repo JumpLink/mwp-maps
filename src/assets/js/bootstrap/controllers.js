@@ -123,13 +123,6 @@ jumplink.cms.controller('AppController', function($rootScope, $scope, $state, $w
     return { 'height': angular.element($window).height(), 'width': angular.element($window).width() };
   };
 
-  angular.element($window).bind('resize', function () {
-    // $timeout(function(){
-    //   $rootScope.$apply();
-    // });
-    // $rootScope.$apply();
-  });
-
   // http://stackoverflow.com/questions/641857/javascript-window-resize-event
   if(angular.element($window).onresize) { // if jQuery is used
     angular.element($window).onresize = function(event) {
@@ -193,13 +186,32 @@ jumplink.cms.controller('LayoutController', function($scope) {
 
 });
 
-jumplink.cms.controller('ToolbarController', function($scope) {
+jumplink.cms.controller('ToolbarController', function($scope, toolbarService, FileUploader) {
+  $scope.currentView = toolbarService.currentView;
 
+  toolbarService.registerObserverCallback(function(view) {
+    $scope.currentView = view;
+    console.log("currentView changed", view);
+  });
+
+  $scope.uploader = new FileUploader({url: '/map/upload', removeAfterUpload: true});
+  $scope.uploader.filters.push({
+    name: 'csvFilter',
+    fn: function(item /*{File|FileLikeObject}*/, options) {
+      var type = '|' + item.type.slice(item.type.lastIndexOf('/') + 1) + '|';
+      return '|csv|'.indexOf(type) !== -1;
+    }
+  });
 
 });
 
 jumplink.cms.controller('FooterController', function($scope) {
 
+});
+
+jumplink.cms.controller('DatabaseController', function($scope, toolbarService, mapDatabase) {
+  $scope.mapDatabase = mapDatabase;
+  toolbarService.prepearView('database');
 });
 
 jumplink.cms.controller('HomeContentController', function($scope, $rootScope, $sailsSocket, $location, $anchorScroll, $timeout, $window, about, goals, $log) {
@@ -265,16 +277,8 @@ jumplink.cms.controller('HomeContentController', function($scope, $rootScope, $s
 });
 
 
-jumplink.cms.controller('MapController', function($rootScope, $scope, $sailsSocket, angularLoad, $filter, $modal, FileUploader, $log) {
-  $scope.uploader = new FileUploader({url: 'map/upload', removeAfterUpload: true});
-  $scope.uploader.filters.push({
-    name: 'imageFilter',
-    fn: function(item /*{File|FileLikeObject}*/, options) {
-      var type = '|' + item.type.slice(item.type.lastIndexOf('/') + 1) + '|';
-      return '|jpg|png|jpeg|bmp|gif|'.indexOf(type) !== -1;
-    }
-  });
-  var editMemberModal = $modal({scope: $scope, title: 'Person bearbeiten', uploader: $scope.uploader, template: 'bootstrap/map/editmembermodal', show: false});
+jumplink.cms.controller('MapController', function($rootScope, $scope, $sailsSocket, angularLoad, toolbarService, FileUploader, $log) {
+  toolbarService.prepearView('map');
 
   $sailsSocket.subscribe('map', function(msg){
     $log.debug(msg);
@@ -421,9 +425,10 @@ jumplink.cms.controller('MapController', function($rootScope, $scope, $sailsSock
 
 });
 
-jumplink.cms.controller('AdminController', function($scope) {
-
+jumplink.cms.controller('AdminController', function($scope, toolbarService) {
+  toolbarService.prepearView('admin');
 });
+
 
 jumplink.cms.controller('UsersController', function($scope, $rootScope, $sailsSocket, users, $log, userService) {
   $scope.users = users;

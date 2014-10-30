@@ -1,4 +1,4 @@
-.container(style="min-height: 200px;")
+.container-fluid(style="min-height: 200px;")
   .row
     .col-md-2.hidden-sm.hidden-xs
       .bs-sidebar(hidden-print, role="complementary", data-offset-top="-50", bs-affix)
@@ -6,9 +6,7 @@
           li(data-target="#imprint", bs-scrollspy, data-offset="30")
             a(ng-click="goTo('imprint')") Impressum
           li(data-target="#contact", bs-scrollspy, data-offset="30")
-            a(ng-click="goTo('contact')") Kontakt
-          //- li(data-target="#approach", bs-scrollspy, data-offset="30")
-          //-   a(ng-click="goTo('approach')") Anfahrt
+            a(ng-click="goTo('contact')") Fehler melden
     .col-md-10
       h1.anchor-static-navbar#imprint
       .page-header
@@ -18,7 +16,7 @@
       div(ng-bind-html="imprint", ng-hide="authenticated")
       h1.anchor-static-navbar#contact
       .page-header.hidden-print
-        h1 Kontakt
+        h1 Fehler melden
       form.hidden-print(role='form', name="form", novalidate, ng-submit="sendMail()")
         //-
         //- Name

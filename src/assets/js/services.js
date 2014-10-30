@@ -1,3 +1,48 @@
+jumplink.cms.service('toolbarService', function () {
+  var currentView = false;
+
+  var observerCallbacks = [];
+
+  //register an observer: http://stackoverflow.com/questions/12576798/how-to-watch-service-variables
+  var registerObserverCallback = function(callback){
+    observerCallbacks.push(callback);
+  };
+
+  //call this when you know 'foo' has been changed
+  var notifyObservers = function(){
+    angular.forEach(observerCallbacks, function(callback){
+      callback(currentView);
+    });
+  };
+
+  var reset = function () {
+    var currentView = false;
+  }
+
+  var prepearView = function (name) {
+    console.log('prepearView', name);
+    reset();
+    currentView = name;
+    switch(name) {
+      case 'database':
+      break;
+      case 'map':
+      break;
+      case 'admin':
+      break;
+    }
+    notifyObservers();
+  }
+
+  reset();
+
+  return {
+    prepearView: prepearView,
+    currentView: currentView,
+    registerObserverCallback: registerObserverCallback
+  };
+});
+
 jumplink.cms.service('historyService', function ($window) {
   var back = function () {
     $window.history.back();

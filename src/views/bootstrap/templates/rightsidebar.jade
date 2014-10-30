@@ -1,8 +1,32 @@
-.aside(tabindex='-1', role='dialog')
+.aside(tabindex='-1', role='dialog', style="max-width:240px")
   .aside-dialog
     .aside-content
       .aside-header(ng-show='title')
         button.close(type='button', ng-click='$hide()') ×
         h4.aside-title(ng-bind='title')
       .aside-body
-        div(slider, ng-from="slider.from", ng-to="slider.to", start=0, end=100, step=5)
+        span(ng-if="currentView == 'database'")
+          .form-group
+            label.control-label(for="fromdate") CSV hochladen
+            //- https://github.com/nervgh/angular-file-upload
+            .input-group
+              span.input-group-btn
+                //- hide the browsers ugly upload button http://www.abeautifulsite.net/whipping-file-inputs-into-shape-with-bootstrap-3/
+                span.btn.btn-success.btn-file(title="Datei auswählen")
+                  i.fa.fa-paperclip
+                  input(type="file", nv-file-select, uploader="uploader")
+              //- just upload last selected file
+              input#attachment.form-control(type="text", title="Anhang", readonly, placeholder='Kein Anhang', ng-model="uploader.queue[uploader.queue.length-1].file.name")
+              span.input-group-btn
+                button.btn.btn-danger(ng-click="uploader.clearQueue()", ng-disabled="uploader.queue.length <= 0", title="Anhang entfernen")
+                  i.fa.fa-trash
+                button.btn.btn-primary(ng-click="uploader.queue[uploader.queue.length-1].upload()", ng-disabled="uploader.queue.length <= 0", title="Hochladen")
+                  i.fa.fa-upload
+            .progress(ng-show="uploader.queue[uploader.queue.length-1].file")
+              .progress-bar.progress-bar-success(role='progressbar', ng-model="uploader.queue[uploader.queue.length-1].progress", aria-valuenow='{{uploader.queue[uploader.queue.length-1].progress}}', aria-valuemin='0', aria-valuemax='100', ng-style="{ 'width': uploader.queue[uploader.queue.length-1].progress + '%' }")
+          span(ng-if="currentView == 'admin'")
+            | admin
+          span(ng-if="currentView == 'map'")
+            .form-group
+              label.control-label(for="fromdate") Zeitbereich
+              div(slider, ng-from="slider.from", ng-to="slider.to", start=0, end=100, step=5)
