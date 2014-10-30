@@ -2,6 +2,8 @@
 src/assets/images/gallery/
 src/assets/images/header/
 
+stuff/
+
 # Logs
 logs
 *.log
