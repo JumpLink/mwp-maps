@@ -29,8 +29,9 @@ var updateOrCreate = function (modelName, data, id, callback) {
   }
 
   // Otherwise, find and destroy the global[modelName] in question
-  global[modelName].findOne(id).exec(function found(err, found) {
+  global[modelName].find(id).exec(function found(err, found) {
     if (err) return callback(err);
+    if (found instanceof Array) found = found[0];
     // sails.log.debug("found", err, found);
     // not found
     if (!found || found.length <= 0)

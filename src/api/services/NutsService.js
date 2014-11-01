@@ -143,8 +143,9 @@ var germany = [
  */
 var updateHascIterator = function (item, callback) {
   sails.log.debug(item);
-  Nuts.findOne({nutscode:item.nutscode}).exec(function found(err, found) {
+  Nuts.find({nutscode:item.nutscode}).exec(function found(err, found) {
     if (err) return callback(err);
+    if (found instanceof Array) found = found[0];
     found.typ = item.typ;
     found.hasc = item.hasc;
     found.rb = item.rb;
