@@ -11,6 +11,22 @@ module.exports = {
     });
   }
 
+  , reimportAll: function (req, res, next) {
+    Nuts.destroy({}).exec(function destroyed (error, data) {
+      if (error) return res.serverError(error);
+      NutsService.importer2010(function (error, result) {
+        if (error) return res.serverError(error);
+        NutsService.insertChilds(function(error, result) {
+          if (error) return res.serverError(error);
+          NutsService.importerHasc(function (error, result) {
+            if (error) return res.serverError(error);
+            res.ok();
+          });
+        });
+      });
+    });
+  }
+
   , importHasc: function (req, res, next) {
     NutsService.importerHasc(function (error, result) {
       if (error) return res.serverError(error);
