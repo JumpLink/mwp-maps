@@ -2,15 +2,18 @@ var http = require('http');
 var fs = require('fs');
 var xml2js = require('xml2js');
 var xmlParser = new xml2js.Parser();
+var csv = require('csv');
 
 /*
+ * Entsprecht NUTS-1 Ebene für Deutschland / Nuts Level 1
  * http://localhost:1338/geojson?mapkey=countries/de/de-all:
- * Entsprecht NUTS-1 Ebene / Nuts Level 1
  * agssubkey: Bundeslandkennziffer (für nuts level 1 die ersten beiden 2 Ziffern vom AGS) gemäß AGS see http://giswiki.org/wiki/Amtlicher_Gemeindeschl%C3%BCssel#Bundesl.C3.A4nder
  * hc-key: Wie ihn Highmaps verwendet Gemäß ISO_3166-2:DE aber lowercase see http://de.wikipedia.org/wiki/ISO_3166-2:DE
  * nutscode: Gemäß NUTS:DE siehe http://de.wikipedia.org/wiki/NUTS:DE
  * level: Nuts-Code Level
  * hasc: Hierarchical administrative subdivision codes see http://en.wikipedia.org/wiki/Hierarchical_administrative_subdivision_codes
+ * Zuordnung hasc nut: www.statoids.com/yde.html
+ * admin_level: http://wiki.openstreetmap.org/wiki/Key:admin_level#admin_level
  *
  * Amtlicher Gemeindeschlüssel
  * Info:
@@ -18,7 +21,7 @@ var xmlParser = new xml2js.Parser();
  *  https://www.destatis.de/DE/ZahlenFakten/LaenderRegionen/Regionales/Gemeindeverzeichnis/Administrativ/Aktuell/Zensus_Gemeinden.html
  *  http://de.wikipedia.org/wiki/Amtlicher_Gemeindeschl%C3%BCssel
  */
-var germany = {
+var germany = [
   {
     'agssubkey': '01',
     'name': 'Schleswig-Holstein',
@@ -31,6 +34,7 @@ var germany = {
     'name': 'Freie und Hansestadt Hamburg',
     'nutscode': 'DE6',
     'level': 1,
+    'hc-key': 'DE-HH'
   },
   {
     'agssubkey': '03',
@@ -119,6 +123,52 @@ var germany = {
   },
 ];
 
+
+/*
+ * source: www.statoids.com/yde.html
+ *
+ * typ: See list of subdivision types below.
+ * b  Federal state Bundesland
+ * d District  Kreis
+ * g Group of regions  Regionalverband
+ * l Rural district  Landkreis
+ * s Town/city that is not part of a district  Kreisfreie Stadt
+ * u Urban district  Stadtkreis
+ *
+ * hasc: Hierarchical administrative subdivision codes.
+ * nutscode: Codes from Nomenclature for Statistical Territorial Units (European standard).
+ * population: 2011-05-09 census
+ * area: km.² Source: German Wikipedia.
+ * rb: Arbitrary code for the Regierungsbezirk as of ~1999 (see list below).
+ */
+var updateHascIterator = function (item, callback) {
+  sails.log.debug(item);
+  Nuts.findOne({nutscode:item.nutscode}).exec(function found(err, found) {
+    if (err) return callback(err);
+    found.typ = item.typ;
+    found.hasc = item.hasc;
+    found.rb = item.rb;
+    found.rb = item.district;
+    found.rb = item.capital;
+    sails.log.info(found);
+    callback(null, found);
+    // Nuts.update(found).exec(function found(err, found) {
+    //   if (err) return callback(err);
+    //   callback(null, item);
+    // });
+  });
+}
+
+var importerHasc = function(callback) {
+  fs.readFile(__dirname + '/../../import/nuts-hasc-de.csv', 'utf8', function(err, data) {
+    if (err) return res.serverError(err);
+    csv.parse(data, {'columns':true}, function(err, columns) {
+      // sails.log.debug(data);
+      async.map(columns, updateHascIterator, callback);
+    });
+  });
+}
+
 var importNutsItemTterator = function (item, callback) {
   ModelService.updateOrCreate('Nuts', item, {nutscode:item.nutscode}, function (err, result) {
     sails.log.debug(err, result);
@@ -138,7 +188,7 @@ var transfromXmlResultNutsItemTterator = function (item, callback) {
   if(item['hasParentRegion'])
     result.parent = item['hasParentRegion'][0]['rdf:Description'][0]['$']['rdf:about'];
 
-  // generel transformation
+  // generel transformation TODO own function
   if(result.level >= 1) {
     result.levelcode = result.nutscode.substr(result.parent.length)
   }
@@ -152,7 +202,7 @@ var importer3 = function(callback) {
   // import from http://ec.europa.eu/
   // download xml from: 'http://ec.europa.eu/eurostat/ramon/rdfdata/nuts2008/';
 
-  fs.readFile(__dirname + '/nuts2008.rdf', function(err, data) {
+  fs.readFile(__dirname + '/../../import/nuts2008.rdf', function(err, data) {
     if (err) callback(err);
     xmlParser.parseString(data, function (err, xml) {
       // sails.log.debug(err, xml['rdf:RDF']['NUTSRegion']);
@@ -167,14 +217,6 @@ var importer2 = function(callback) {
   // import from http://www.eea.europa.eu/data-and-maps/daviz/sds/nuts-regions-level-0-to-2/@@view
 
   var url = 'http://www.eea.europa.eu/data-and-maps/daviz/sds/nuts-regions-level-0-to-2/daviz.json';
-
-  var importNutsItemTterator = function (item, callback) {
-    ModelService.updateOrCreate('Geojson', item, {label:item.label}, function (err, result) {
-      sails.log.debug(err, result);
-      if (err) callback(err);
-      else callback(null, result);
-    });
-  }
 
   http.get(url, function(resp) {
       var body = '';
@@ -229,5 +271,6 @@ var insertChilds = function(callback) {
 module.exports = {
   importer3: importer3,
   importer2: importer2,
+  importerHasc: importerHasc,
   insertChilds: insertChilds,
 }
