@@ -146,6 +146,7 @@ var updateHascIterator = function (item, callback) {
   Nuts.find({nutscode:item.nutscode}).exec(function found(err, found) {
     if (err) return callback(err);
     if (found instanceof Array) found = found[0];
+    sails.log.debug(found);
     found.typ = item.typ;
     found.hasc = item.hasc;
     found.rb = item.rb;
@@ -165,7 +166,7 @@ var importerHasc = function(callback) {
     if (err) return res.serverError(err);
     csv.parse(data, {'columns':true}, function(err, columns) {
       // sails.log.debug(data);
-      async.map(columns, updateHascIterator, callback);
+      async.mapSeries(columns, updateHascIterator, callback);
     });
   });
 }
@@ -178,30 +179,64 @@ var importNutsItemTterator = function (item, callback) {
   });
 }
 
-var transfromXmlResultNutsItemTterator = function (item, callback) {
-  var result = {};
+var validateNuts = function (item) {
+  if(item.level > 0) {
+    if(!item.parent) {
+      item.parent = item.nutscode.substr(0, item.nutscode.length - 1);
+    }
 
-  // xml transformation
-  result.nutscode = item.regionCode[0];
-  result.name = item.name[0];
-  result.label = item['rdfs:label'][0];
-  result.level = Number(item['level'][0]['_']);
-  if(item['hasParentRegion'])
-    result.parent = item['hasParentRegion'][0]['rdf:Description'][0]['$']['rdf:about'];
-
-  // generel transformation TODO own function
-  if(result.level >= 1) {
-    result.levelcode = result.nutscode.substr(result.parent.length)
+    if(!item.levelcode) {
+      item.levelcode = item.nutscode.substr(item.parent.length)
+    }
   }
 
-  importNutsItemTterator(result, callback);
-  // callback(null, result);
+  return item;
 }
+
+// import level 0 - 3
+var importer2010 = function(callback) {
+  // source: https://github.com/GeoKnow/GeoStats/tree/master/data/nuts
+
+  var iterator = function (item, callback) {
+    delete item['countries sorting order'];
+    delete item.order;
+
+    item = validateNuts(item);
+
+    importNutsItemTterator(item, callback);
+  }
+
+  fs.readFile(__dirname + '/../../import/NUTS_2010.csv', function(err, data) {
+    if (err) callback(err);
+    csv.parse(data, {'columns':true}, function(err, columns) {
+      // sails.log.debug(data);
+      async.mapSeries(columns, iterator, callback);
+    });
+  });
+}
+
 
 // import level 0 - 3
 var importer3 = function(callback) {
   // import from http://ec.europa.eu/
   // download xml from: 'http://ec.europa.eu/eurostat/ramon/rdfdata/nuts2008/';
+
+  var transfromXmlResultNutsItemTterator = function (item, callback) {
+    var result = {};
+
+    // xml transformation
+    result.nutscode = item.regionCode[0];
+    result.name = item.name[0];
+    result.label = item['rdfs:label'][0];
+    result.level = Number(item['level'][0]['_']);
+    if(item['hasParentRegion'])
+      result.parent = item['hasParentRegion'][0]['rdf:Description'][0]['$']['rdf:about'];
+
+    item = validateNuts(item);
+
+    importNutsItemTterator(result, callback);
+    // callback(null, result);
+  }
 
   fs.readFile(__dirname + '/../../import/nuts2008.rdf', function(err, data) {
     if (err) callback(err);
@@ -272,6 +307,7 @@ var insertChilds = function(callback) {
 module.exports = {
   importer3: importer3,
   importer2: importer2,
+  importer2010: importer2010,
   importerHasc: importerHasc,
   insertChilds: insertChilds,
 }
