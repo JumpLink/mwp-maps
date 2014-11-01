@@ -154,7 +154,7 @@ var updateHascIterator = function (item, callback) {
     found.rb = item.capital;
     sails.log.info(found);
     // callback(null, found);
-    Nuts.update(found).exec(function found(err, found) {
+    Nuts.update(found.id, found).exec(function found(err, found) {
       if (err) return callback(err);
       callback(null, item);
     });
