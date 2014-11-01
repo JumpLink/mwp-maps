@@ -37,14 +37,14 @@ var updateOrCreate = function (modelName, data, id, callback) {
       global[modelName].create(data).exec(function created (err, data) {
         if (err) return callback(err);
         // sails.log.debug("created", err, data);
-        global[modelName].publishCreate(id, data);
+        global[modelName].publishCreate(data);
         return callback(null, data);
       });
     else {
-      global[modelName].update(id, data).exec(function updated (err, data) {
+      global[modelName].update(found.id, data).exec(function updated (err, data) {
         if (err) return callback(err);
         // sails.log.debug("update", err, data);
-        global[modelName].publishUpdate(id, data);
+        global[modelName].publishUpdate(data.id, data);
         return callback(null, data);
       });
     }
