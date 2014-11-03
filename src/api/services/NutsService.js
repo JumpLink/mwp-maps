@@ -295,14 +295,14 @@ var insertChilds = function(callback) {
   }
 
   var levelIterator = function (level, callback) {
-    Nuts.find({level:level}).exec(function found(err, found) {
+    Nuts.find({'level':level}).exec(function found(err, found) {
       sails.log.debug(err, found);
       if (err) return callback(err);
       async.mapSeries(found, parentIterator, callback);
     });
   }
 
-  async.mapSeries([0,1,2], levelIterator, callback);
+  async.mapSeries(['0','1','2'], levelIterator, callback);
 
 }
 
