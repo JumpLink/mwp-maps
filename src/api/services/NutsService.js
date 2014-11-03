@@ -4,174 +4,226 @@ var xml2js = require('xml2js');
 var xmlParser = new xml2js.Parser();
 var csv = require('csv');
 
-/*
- * Entsprecht NUTS-1 Ebene für Deutschland / Nuts Level 1
- * http://localhost:1338/geojson?mapkey=countries/de/de-all:
- * agssubkey: Bundeslandkennziffer (für nuts level 1 die ersten beiden 2 Ziffern vom AGS) gemäß AGS see http://giswiki.org/wiki/Amtlicher_Gemeindeschl%C3%BCssel#Bundesl.C3.A4nder
- * hc-key: Wie ihn Highmaps verwendet Gemäß ISO_3166-2:DE aber lowercase see http://de.wikipedia.org/wiki/ISO_3166-2:DE
- * nutscode: Gemäß NUTS:DE siehe http://de.wikipedia.org/wiki/NUTS:DE
- * level: Nuts-Code Level
- * hasc: Hierarchical administrative subdivision codes see http://en.wikipedia.org/wiki/Hierarchical_administrative_subdivision_codes
- * Zuordnung hasc nut: www.statoids.com/yde.html
- * admin_level: http://wiki.openstreetmap.org/wiki/Key:admin_level#admin_level
- *
- * Amtlicher Gemeindeschlüssel
- * Info:
- *  https://www.destatis.de/DE/ZahlenFakten/LaenderRegionen/Regionales/Gemeindeverzeichnis_ol.html
- *  https://www.destatis.de/DE/ZahlenFakten/LaenderRegionen/Regionales/Gemeindeverzeichnis/Administrativ/Aktuell/Zensus_Gemeinden.html
- *  http://de.wikipedia.org/wiki/Amtlicher_Gemeindeschl%C3%BCssel
- */
-var germany = [
-  {
-    'agssubkey': '01',
-    'name': 'Schleswig-Holstein',
-    'nutscode': 'DEF',
-    'level': 1,
-    'hc-key': 'DE-SH'
-  },
-  {
-    'agssubkey': '02',
-    'name': 'Freie und Hansestadt Hamburg',
-    'nutscode': 'DE6',
-    'level': 1,
-    'hc-key': 'DE-HH'
-  },
-  {
-    'agssubkey': '03',
-    'name': 'Niedersachsen',
-    'nutscode': 'DE9',
-    'level': 1,
-  },
-  {
-    'agssubkey': '04',
-    'name': 'Freie Hansestadt Bremen',
-    'nutscode': 'DE5',
-    'level': 1,
-  },
-  {
-    'agssubkey': '05',
-    'name': 'Nordrhein-Westfalen',
-    'nutscode': 'DEA',
-    'level': 1,
-  },
-  {
-    'agssubkey': '06',
-    'name': 'Hessen',
-    'nutscode': 'DE7',
-    'level': 1,
-  },
-  {
-    'agssubkey': '07',
-    'name': 'Rheinland-Pfalz',
-    'nutscode': 'DEB',
-    'level': 1,
-  },
-  {
-    'agssubkey': '08',
-    'name': 'Baden-Württemberg',
-    'nutscode': 'DE1',
-    'level': 1,
-  },
-  {
-    'agssubkey': '09',
-    'name': 'Bayern',
-    'nutscode': 'DE2',
-    'level': 1,
-  },
-  {
-    'agssubkey': '10',
-    'name': 'Saarland',
-    'nutscode': 'DEC',
-    'level': 1,
-    'level': 1,
-  },
-  {
-    'agssubkey': '11',
-    'name': 'Berlin',
-    'nutscode': 'DE3',
-    'level': 1,
-  },
-  {
-    'agssubkey': '12',
-    'name': 'Brandenburg',
-    'nutscode': 'DE4',
-    'level': 1,
-  },
-  {
-    'agssubkey': '13',
-    'name': 'Mecklenburg-Vorpommern',
-    'nutscode': 'DE8',
-    'level': 1,
-  },
-  {
-    'agssubkey': '14',
-    'name': 'Freistaat Sachsen|Sachsen',
-    'nutscode': 'DED',
-    'level': 1,
-  },
-  {
-    'agssubkey': '15',
-    'name': 'Sachsen-Anhalt',
-    'nutscode': 'DEE',
-    'level': 1,
-  },
-  {
-    'agssubkey': '16',
-    'name': 'Thüringen',
-    'nutscode': 'DEG',
-    'level': 1,
-  },
-];
+var importerHascDeLevel1 = function(callback) {
+  /*
+   * Source: Pascal Garber
+   * Entsprecht NUTS-1 Ebene für Deutschland / Nuts Level 1
+   * Beispiel: http://localhost:1338/geojson?mapkey=countries/de/de-all:
+   * agssubcode: Bundeslandkennziffer (für nuts level 1 die ersten beiden 2 Ziffern vom AGS) gemäß AGS see http://giswiki.org/wiki/Amtlicher_Gemeindeschl%C3%BCssel#Bundesl.C3.A4nder
+   * hc-key: Wie ihn Highmaps verwendet Gemäß ISO_3166-2:DE aber lowercase see http://de.wikipedia.org/wiki/ISO_3166-2:DE
+   * nutscode: Gemäß NUTS:DE siehe http://de.wikipedia.org/wiki/NUTS:DE
+   * nutslevel: Nuts-Code Level
+   * adminlevel: Admin level gemäß hasc; ( alternativer admin level: http://wiki.openstreetmap.org/wiki/Key:admin_level#admin_level)
+   * hasc: Hierarchical administrative subdivision codes see http://en.wikipedia.org/wiki/Hierarchical_administrative_subdivision_codes
+   *
+   * Amtlicher Gemeindeschlüssel
+   * Info:
+   *  https://www.destatis.de/DE/ZahlenFakten/LaenderRegionen/Regionales/Gemeindeverzeichnis_ol.html
+   *  https://www.destatis.de/DE/ZahlenFakten/LaenderRegionen/Regionales/Gemeindeverzeichnis/Administrativ/Aktuell/Zensus_Gemeinden.html
+   *  http://de.wikipedia.org/wiki/Amtlicher_Gemeindeschl%C3%BCssel
+   */
+  var bundeslaender = [
+    {
+      'agssubcode': '01',
+      'federalstate': 'Schleswig-Holstein',
+      'nutscode': 'DEF',
+      'adminlevel': 1,
+      'nutslevel': 1,
+      'hasc': 'DE.SH',
+    },
+    {
+      'agssubcode': '02',
+      'federalstate': 'Freie und Hansestadt Hamburg',
+      'nutscode': 'DE6',
+      'adminlevel': 1,
+      'nutslevel': 1,
+      'hasc': 'DE.HH',
+    },
+    {
+      'agssubcode': '03',
+      'federalstate': 'Niedersachsen',
+      'nutscode': 'DE9',
+      'adminlevel': 1,
+      'nutslevel': 1,
+      'hasc': 'DE.NI',
+    },
+    {
+      'agssubcode': '04',
+      'federalstate': 'Freie Hansestadt Bremen',
+      'nutscode': 'DE5',
+      'adminlevel': 1,
+      'nutslevel': 1,
+      'hasc': 'DE.HB',
+    },
+    {
+      'agssubcode': '05',
+      'federalstate': 'Nordrhein-Westfalen',
+      'nutscode': 'DEA',
+      'adminlevel': 1,
+      'nutslevel': 1,
+      'hasc': 'DE.NW',
+    },
+    {
+      'agssubcode': '06',
+      'federalstate': 'Hessen',
+      'nutscode': 'DE7',
+      'adminlevel': 1,
+      'nutslevel': 1,
+      'hasc': 'DE.HE',
+    },
+    {
+      'agssubcode': '07',
+      'federalstate': 'Rheinland-Pfalz',
+      'nutscode': 'DEB',
+      'adminlevel': 1,
+      'nutslevel': 1,
+      'hasc': 'DE.RP',
+    },
+    {
+      'agssubcode': '08',
+      'federalstate': 'Baden-Württemberg',
+      'nutscode': 'DE1',
+      'adminlevel': 1,
+      'nutslevel': 1,
+      'hasc': 'DE.BW',
+    },
+    {
+      'agssubcode': '09',
+      'federalstate': 'Bayern',
+      'nutscode': 'DE2',
+      'adminlevel': 1,
+      'nutslevel': 1,
+      'hasc': 'DE.BY',
+    },
+    {
+      'agssubcode': '10',
+      'federalstate': 'Saarland',
+      'nutscode': 'DEC',
+      'adminlevel': 1,
+      'nutslevel': 1,
+      'hasc': 'DE.SL',
+    },
+    {
+      'agssubcode': '11',
+      'federalstate': 'Berlin',
+      'nutscode': 'DE3',
+      'adminlevel': 1,
+      'nutslevel': 1,
+      'hasc': 'DE.BE',
+    },
+    {
+      'agssubcode': '12',
+      'federalstate': 'Brandenburg',
+      'nutscode': 'DE4',
+      'adminlevel': 1,
+      'nutslevel': 1,
+      'hasc': 'DE.BB',
+    },
+    {
+      'agssubcode': '13',
+      'federalstate': 'Mecklenburg-Vorpommern',
+      'nutscode': 'DE8',
+      'adminlevel': 1,
+      'nutslevel': 1,
+      'hasc': 'DE.MV',
+    },
+    {
+      'agssubcode': '14',
+      'federalstate': 'Freistaat Sachsen|Sachsen',
+      'nutscode': 'DED',
+      'adminlevel': 1,
+      'nutslevel': 1,
+      'hasc': 'DE.SN',
+    },
+    {
+      'agssubcode': '15',
+      'federalstate': 'Sachsen-Anhalt',
+      'nutscode': 'DEE',
+      'adminlevel': 1,
+      'nutslevel': 1,
+      'hasc': 'DE.ST',
+    },
+    {
+      'agssubcode': '16',
+      'federalstate': 'Thüringen',
+      'nutscode': 'DEG',
+      'adminlevel': 1,
+      'nutslevel': 1,
+      'hasc': 'DE.TH',
+    },
+  ];
 
-
-/*
- * source: www.statoids.com/yde.html
- *
- * typ: See list of subdivision types below.
- * b  Federal state Bundesland
- * d District  Kreis
- * g Group of regions  Regionalverband
- * l Rural district  Landkreis
- * s Town/city that is not part of a district  Kreisfreie Stadt
- * u Urban district  Stadtkreis
- *
- * hasc: Hierarchical administrative subdivision codes.
- * nutscode: Codes from Nomenclature for Statistical Territorial Units (European standard).
- * population: 2011-05-09 census
- * area: km.² Source: German Wikipedia.
- * rb: Arbitrary code for the Regierungsbezirk as of ~1999 (see list below).
- */
-var updateHascIterator = function (item, callback) {
-  sails.log.debug(item);
-  Nuts.find({nutscode:item.nutscode}).exec(function found(err, found) {
-    if (err) return callback(err);
-    if (found instanceof Array) found = found[0];
-    sails.log.debug(found);
-    found.typ = item.typ;
-    found.hasc = item.hasc;
-    found.rb = item.rb;
-    found.rb = item.district;
-    found.rb = item.capital;
-    sails.log.info(found);
-    // callback(null, found);
-    Nuts.update(found.id, found).exec(function found(err, found) {
+  var iterator = function (item, callback) {
+    // sails.log.debug(item);
+    Nuts.find({nutscode:item.nutscode}).exec(function found(err, found) {
       if (err) return callback(err);
-      callback(null, item);
+      if (found instanceof Array) found = found[0];
+      // sails.log.debug(found);
+      found.hasc = item.hasc;
+      found.agssubcode = item.agssubcode;
+      found.adminlevel = item.adminlevel; // nutslevel 1 entspricht admin level 1 in deutschland
+      found.federalstate = item.federalstate;
+      found.typ = 'b'; // typ b: Federal state see below
+      sails.log.info(found);
+      // callback(null, found);
+      Nuts.update(found.id, found).exec(function found(err, found) {
+        if (err) return callback(err);
+        callback(null, found);
+      });
     });
-  });
+  }
+
+  async.mapSeries(bundeslaender, iterator, callback);
 }
 
-/*
- * Source: www.statoids.com/yde.html
- */
-var importerHasc = function(callback) {
+var importerHascDeLevel3 = function(callback) {
+
+  var iterator = function (item, callback) {
+    sails.log.debug(item);
+    Nuts.find({nutscode:item.nutscode}).exec(function found(err, found) {
+      if (err) return callback(err);
+      if (found instanceof Array) found = found[0];
+      sails.log.debug(found);
+      found.typ = item.typ;
+      found.hasc = item.hasc;
+      found.rb = item.rb;
+      found.district = item.district;
+      found.capital = item.capital;
+      found.adminlevel = 3; // nutslevel 3 entspricht admin level 3 in deutschland
+      sails.log.info(found);
+      // callback(null, found);
+      Nuts.update(found.id, found).exec(function found(err, found) {
+        if (err) return callback(err);
+        callback(null, found);
+      });
+    });
+  }
+
+  /*
+   * source: www.statoids.com/yde.html
+   *
+   * typ: See list of subdivision types below.
+   * b  Federal state                               Bundesland
+   * d  District                                    Kreis
+   * g  Group of regions                            Regionalverband
+   * l  Rural district                              Landkreis
+   * s  Town/city that is not part of a district    Kreisfreie Stadt
+   * u  Urban district                              Stadtkreis
+   *
+   * hasc: Hierarchical administrative subdivision codes.
+   * nutscode: Codes from Nomenclature for Statistical Territorial Units (European standard).
+   * population: 2011-05-09 census
+   * area: km.² Source: German Wikipedia.
+   * rb: Arbitrary code for the Regierungsbezirk as of ~1999 (see list below).
+   */
   fs.readFile(__dirname + '/../../import/nuts-hasc-de.csv', 'utf8', function(err, data) {
     if (err) return res.serverError(err);
     csv.parse(data, {'columns':true}, function(err, columns) {
       // sails.log.debug(data);
-      async.mapSeries(columns, updateHascIterator, callback);
+      async.mapSeries(columns, iterator, callback);
     });
   });
+
 }
 
 var importNutsItemTterator = function (item, callback) {
@@ -183,13 +235,18 @@ var importNutsItemTterator = function (item, callback) {
 }
 
 var validateNuts = function (item) {
+
+  if(typeof item.level != 'undefined') {
+    item.level = Number(item.level);
+  }
+
   if(item.level > 0) {
     if(!item.parent) {
       item.parent = item.nutscode.substr(0, item.nutscode.length - 1);
     }
 
-    if(!item.levelcode) {
-      item.levelcode = item.nutscode.substr(item.parent.length)
+    if(!item.nutsubcode) {
+      item.nutsubcode = item.nutscode.substr(item.parent.length)
     }
   }
 
@@ -231,7 +288,7 @@ var importer3 = function(callback) {
     result.nutscode = item.regionCode[0];
     result.name = item.name[0];
     result.label = item['rdfs:label'][0];
-    result.level = Number(item['level'][0]['_']);
+    result.level = item['level'][0]['_'];
     if(item['hasParentRegion'])
       result.parent = item['hasParentRegion'][0]['rdf:Description'][0]['$']['rdf:about'];
 
@@ -302,7 +359,7 @@ var insertChilds = function(callback) {
     });
   }
 
-  async.mapSeries(['0','1','2'], levelIterator, callback);
+  async.mapSeries([0,1,2], levelIterator, callback);
 
 }
 
@@ -311,6 +368,7 @@ module.exports = {
   importer3: importer3,
   importer2: importer2,
   importer2010: importer2010,
-  importerHasc: importerHasc,
+  importerHascDeLevel3: importerHascDeLevel3,
+  importerHascDeLevel1: importerHascDeLevel1,
   insertChilds: insertChilds,
 }

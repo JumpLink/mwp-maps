@@ -18,17 +18,27 @@ module.exports = {
         if (error) return res.serverError(error);
         NutsService.insertChilds(function(error, result) {
           if (error) return res.serverError(error);
-          NutsService.importerHasc(function (error, result) {
+          NutsService.importerHascDeLevel3(function (error, result) {
             if (error) return res.serverError(error);
-            res.ok();
+            NutsService.importerHascDeLevel1(function (error, result) {
+              if (error) return res.serverError(error);
+              res.ok();
+            });
           });
         });
       });
     });
   }
 
-  , importHasc: function (req, res, next) {
-    NutsService.importerHasc(function (error, result) {
+  , importerHascDeLevel1: function (req, res, next) {
+    NutsService.importerHascDeLevel1(function (error, result) {
+      if (error) return res.serverError(error);
+      res.json(result);
+    });
+  }
+
+  , importerHascDeLevel3: function (req, res, next) {
+    NutsService.importerHascDeLevel3(function (error, result) {
       if (error) return res.serverError(error);
       res.json(result);
     });
