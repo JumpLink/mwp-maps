@@ -178,6 +178,23 @@ var importerHascDeLevel1 = function(callback) {
 
 var importerHascDeLevel3 = function(callback) {
 
+  /*
+   * source: www.statoids.com/yde.html
+   *
+   * typ: See list of subdivision types below.
+   * b  Federal state                               Bundesland
+   * d  District                                    Kreis
+   * g  Group of regions                            Regionalverband
+   * l  Rural district                              Landkreis
+   * s  Town/city that is not part of a district    Kreisfreie Stadt
+   * u  Urban district                              Stadtkreis
+   *
+   * hasc: Hierarchical administrative subdivision codes.
+   * nutscode: Codes from Nomenclature for Statistical Territorial Units (European standard).
+   * population: 2011-05-09 census
+   * area: km.² Source: German Wikipedia.
+   * rb: Arbitrary code for the Regierungsbezirk as of ~1999 (see list below).
+   */
   var iterator = function (item, callback) {
     sails.log.debug(item);
     Nuts.find({nutscode:item.nutscode}).exec(function found(err, found) {
@@ -199,23 +216,6 @@ var importerHascDeLevel3 = function(callback) {
     });
   }
 
-  /*
-   * source: www.statoids.com/yde.html
-   *
-   * typ: See list of subdivision types below.
-   * b  Federal state                               Bundesland
-   * d  District                                    Kreis
-   * g  Group of regions                            Regionalverband
-   * l  Rural district                              Landkreis
-   * s  Town/city that is not part of a district    Kreisfreie Stadt
-   * u  Urban district                              Stadtkreis
-   *
-   * hasc: Hierarchical administrative subdivision codes.
-   * nutscode: Codes from Nomenclature for Statistical Territorial Units (European standard).
-   * population: 2011-05-09 census
-   * area: km.² Source: German Wikipedia.
-   * rb: Arbitrary code for the Regierungsbezirk as of ~1999 (see list below).
-   */
   fs.readFile(__dirname + '/../../import/nuts-hasc-de.csv', 'utf8', function(err, data) {
     if (err) return res.serverError(err);
     csv.parse(data, {'columns':true}, function(err, columns) {
@@ -245,8 +245,8 @@ var validateNuts = function (item) {
       item.parent = item.nutscode.substr(0, item.nutscode.length - 1);
     }
 
-    if(!item.nutsubcode) {
-      item.nutsubcode = item.nutscode.substr(item.parent.length)
+    if(!item.nutssubcode) {
+      item.nutssubcode = item.nutscode.substr(item.parent.length)
     }
   }
 

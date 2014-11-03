@@ -4,19 +4,171 @@ var xml2js = require('xml2js');
 var xmlParser = new xml2js.Parser();
 var csv = require('csv');
 
+var importLevel0 = function (callback) {
+  GeojsonService.importMapkey('custom/world-highres', callback);
+}
+
+var importLevel1 = function (callback) {
+  //TODO more contries: http://code.highcharts.com/mapdata/
+  var mapkeys = [
+    'countries/af/af-all', // Afghanistan
+    'countries/al/al-all', // Albania
+    'countries/dz/dz-all', // Algeria
+    'countries/as/as-all', // American Samoa
+    'countries/ad/ad-all', // Andorra
+    'countries/ao/ao-all', // Angola
+    'countries/ag/ag-all', // Antigua and Barbuda
+    'countries/ar/ar-all', // Argentina
+    'countries/am/am-all', // Armenia
+    'countries/au/au-all', // Australia
+    'countries/at/at-all', // Austria
+    'countries/az/az-all', // Azerbaijan
+    // ..
+    'countries/de/de-all', // Germany
+    // ..
+  ];
+
+  var iterator = function (mapkey, callback) {
+    GeojsonService.importMapkey(mapkey, callback);
+  }
+
+  async.map(mapkeys, iterator, callback);
+}
+
+var importLevel2 = function (callback) {
+  //TODO more contries: http://code.highcharts.com/mapdata/
+  var mapkeys = [
+    'countries/de/de-bw-all',
+    'countries/de/de-by-all',
+    'countries/de/de-be-all',
+    'countries/de/de-bb-all',
+    'countries/de/de-hb-all',
+    'countries/de/de-hh-all',
+    'countries/de/de-he-all',
+    'countries/de/de-mv-all',
+    'countries/de/de-ni-all',
+    'countries/de/de-nw-all',
+    'countries/de/de-rp-all',
+    'countries/de/de-sl-all',
+    'countries/de/de-sn-all',
+    'countries/de/de-st-all',
+    'countries/de/de-sh-all',
+    'countries/de/de-th-all',
+  ];
+
+  var iterator = function (mapkey, callback) {
+    GeojsonService.importMapkey(mapkey, callback);
+  }
+
+  async.map(mapkeys, iterator, callback);
+}
+
+var importLevel3 = function (callback) {
+  //TODO more contries: http://code.highcharts.com/mapdata/
+  var mapkeys = [
+    'countries/de/de-bw-all-all',
+    'countries/de/de-by-all-all',
+    'countries/de/de-be-all-all',
+    'countries/de/de-bb-all-all',
+    'countries/de/de-hb-all-all',
+    'countries/de/de-hh-all-all',
+    'countries/de/de-he-all-all',
+    'countries/de/de-mv-all-all',
+    'countries/de/de-ni-all-all',
+    'countries/de/de-nw-all-all',
+    'countries/de/de-rp-all-all',
+    'countries/de/de-sl-all-all',
+    'countries/de/de-sn-all-all',
+    'countries/de/de-st-all-all',
+    'countries/de/de-sh-all-all',
+    'countries/de/de-th-all-all',
+  ];
+
+  var iterator = function (mapkey, callback) {
+    GeojsonService.importMapkey(mapkey, callback);
+  }
+
+  async.map(mapkeys, iterator, callback);
+}
+
 // mapkey e.g.: 'custom/world-highres' | 'de-all-all' | 'countries/de/de-hh-all-all'
 // available mapkeys: http://code.highcharts.com/mapdata/
 var importMapkey = function (mapkey, callback) {
-  var adminLevel = null; // highmaps-property for that is 'hc-group'
+
+  validateFeature = function (feature, callback) {
+    if(feature.properties['hc-group']) {
+      switch (feature.properties['hc-group']) {
+        case 'admin3':
+          feature.properties.adminlevel = 3;
+          feature.properties.nutslevel = 3; // TODO check this for other countries
+        break;
+        case 'admin2':
+          feature.properties.adminlevel = 2;
+          // nutslevel is NOT the same
+        break;
+        case 'admin1':
+          feature.properties.adminlevel = 1;
+          feature.properties.nutslevel = 1; // TODO check this for other countries
+        break;
+        case 'admin0':
+          feature.properties.adminlevel = 0;
+          feature.properties.nutslevel = 0;
+        break;
+      }
+    }
+
+    if(feature.properties['hc-key']) {
+
+
+      feature.properties['hasc0'] = feature.properties['hc-key'].substring(0, 2).toUpperCase(); // die ersten beiden levelcodes im hc-key entsprechen dem von hasc
+
+      if(feature.properties.adminlevel >= 1) {
+        feature.properties['hasc1'] = feature.properties['hc-key'].substring(3, 5).toUpperCase();
+      }
+
+      switch(feature.properties.adminlevel) {
+        case 0:
+          if(feature.properties['hc-a2'])
+            feature.properties['hasc0'] = feature.properties['hc-a2'];
+          if(!feature.properties['hasc'])
+            feature.properties['hasc'] = feature.properties['hasc0'];
+        break;
+        case 1:
+          if(feature.properties['hc-a2'])
+            feature.properties['hasc1'] = feature.properties['hc-a2'];
+          if(!feature.properties['hasc'])
+            feature.properties['hasc'] = feature.properties['hasc0'] + "." +feature.properties['hasc1'];
+        break;
+        case 2:
+          if(feature.properties['hc-a2'])
+            feature.properties['hasc2'] = feature.properties['hc-a2'];
+          if(!feature.properties['hasc'])
+            feature.properties['hasc'] = feature.properties['hasc0'] + "." +feature.properties['hasc1'] + "." + feature.properties['hasc2'];
+        break;
+        case 3:
+          if(feature.properties['hc-a2'])
+            feature.properties['hasc3'] = feature.properties['hc-a2'];
+          if(!feature.properties['hasc'])
+            feature.properties['hasc'] = feature.properties['hasc0'] + "." +feature.properties['hasc1'] + "." + feature.properties['hasc2']  + "." + feature.properties['hasc3'];;
+        break;
+      }
+    }
+
+    callback(null, feature);
+  }
+
+  var adminlevel = null; // highmaps-property for that is 'hc-group'
   var nutscode0 = null;
   var nutslevel = null;
+  var nutscode = null;
+
   switch(mapkey) {
     case 'custom/world-highres':
-      adminLevel = 0;
+      adminlevel = 0;
     break;
     // Deutschland mit allen Bundesländern
     case 'countries/de/de-all':
-      adminLevel = 1;
+      adminlevel = 1;
       nutscode0 = 'DE';
     break;
     /*
@@ -25,7 +177,7 @@ var importMapkey = function (mapkey, callback) {
      * Entspricht dritte bis fünfte Ziffer im AGS (Amtlicher Gemeindeschlüssel) aka Kreisschlüssel, identifiziert den Landkreis bzw. die kreisfreie Stadt, dem die Gemeinde angehör
      */
     case 'countries/de/de-all-all':
-      adminLevel = 2;
+      adminlevel = 2;
       nutscode0 = 'DE';
     break;
     /*
@@ -47,7 +199,7 @@ var importMapkey = function (mapkey, callback) {
     case 'countries/de/de-st-all':
     case 'countries/de/de-sh-all':
     case 'countries/de/de-th-all':
-      adminLevel = 2;
+      adminlevel = 2;
       nutscode0 = 'DE';
     break;
     /*
@@ -69,17 +221,17 @@ var importMapkey = function (mapkey, callback) {
     case 'countries/de/de-st-all-all':
     case 'countries/de/de-sh-all-all':
     case 'countries/de/de-th-all-all':
-      adminLevel = 3;
+      adminlevel = 3;
       nutscode0 = 'DE';
     break;
   }
 
   switch (nutscode0) {
     case 'DE':
-      switch (adminLevel) {
+      switch (adminlevel) {
         case 1:
           nutslevel = 1; // admin level 1 entspricht dem nuts level 1 in Deutschland
-          nutscode = 'DE';
+          nutscode = 'DE'; // primary nutscode for this nutslevel
         case 2:
           // admin level 2 entspricht NICHT dem nuts level 2 in Deutschland TODO!
         break;
@@ -89,7 +241,7 @@ var importMapkey = function (mapkey, callback) {
       }
     break;
     default:
-      switch (adminLevel) {
+      switch (adminlevel) {
         case 0:
           nutslevel = 0; // admin level 0 entspricht dem nuts level 0 in allen Ländern
         break;
@@ -110,8 +262,8 @@ var importMapkey = function (mapkey, callback) {
           var geoJsonResponse = JSON.parse(body)
           sails.log.debug("Got response: ", geoJsonResponse);
           geoJsonResponse.mapkey = mapkey;
-          if(adminLevel != null) {
-            geoJsonResponse.adminLevel = adminLevel;
+          if(adminlevel != null) {
+            geoJsonResponse.adminlevel = adminlevel;
           }
           if(nutslevel != null) {
             geoJsonResponse.nutslevel = nutslevel;
@@ -122,11 +274,19 @@ var importMapkey = function (mapkey, callback) {
           if(nutscode != null) {
             geoJsonResponse.nutscode = nutscode;
           }
-          ModelService.updateOrCreate('Geojson', geoJsonResponse, {mapkey:mapkey}, function (err, result) {
-            sails.log.debug(err, result);
-            if (err) return callback(err);
-            callback(null, result);
+
+          async.map(geoJsonResponse.features, validateFeature, function (error, features) {
+            if (error) return callback(error);
+            geoJsonResponse.features = features;
+
+            ModelService.updateOrCreate('Geojson', geoJsonResponse, {mapkey:mapkey}, function (err, result) {
+              sails.log.debug(err, result);
+              if (err) return callback(err);
+              callback(null, result);
+            });
+
           });
+
       });
   }).on('error', function(err) {
       sails.log.error(err);
@@ -136,5 +296,9 @@ var importMapkey = function (mapkey, callback) {
 
 
 module.exports = {
-  importMapkey: importMapkey
+  importMapkey: importMapkey,
+  importLevel0: importLevel0,
+  importLevel1: importLevel1,
+  importLevel2: importLevel2,
+  importLevel3: importLevel3,
 }
