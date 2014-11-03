@@ -7,6 +7,8 @@
 
 module.exports = {
 
+  adapter: 'localDiskDb',
+
   attributes: {
 
   }

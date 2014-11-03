@@ -22,7 +22,8 @@ var beforeUpdateCreate = function(values, next) {
 
 module.exports = {
 
-  schema: true // save only the values defined in attributes in database
+  adapter: 'localDiskDb'
+  ,schema: true // save only the values defined in attributes in database
 
   , attributes: {
     email: {

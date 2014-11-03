@@ -31,6 +31,7 @@
     "rc": "~0.3.3",
     "sails": "~0.10.0-rc9",
     "sails-disk": "~0.10.0",
+    "sails-mongo": "^0.10.4",
     "underscore": "^1.7.0",
     "validator": "^3.22.0",
     "xml2js": "^0.4.4"

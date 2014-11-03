@@ -161,6 +161,9 @@ var updateHascIterator = function (item, callback) {
   });
 }
 
+/*
+ * Source: www.statoids.com/yde.html
+ */
 var importerHasc = function(callback) {
   fs.readFile(__dirname + '/../../import/nuts-hasc-de.csv', 'utf8', function(err, data) {
     if (err) return res.serverError(err);
