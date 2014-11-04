@@ -127,9 +127,22 @@ module.exports = {
   }
 
   , reimportall: function (req, res, next) {
-    Geojson.destroy({}).exec(function destroyed (error, data) {
+    GeojsonService.destroyAll(function destroyed (error, data) {
       if (error) return res.serverError(error);
-      res.ok();
+      GeojsonService.importLevel0(function destroyed (error, data) {
+        if (error) return res.serverError(error);
+        GeojsonService.importLevel1(function destroyed (error, data) {
+          if (error) return res.serverError(error);
+          GeojsonService.importLevel2(function destroyed (error, data) {
+            if (error) return res.serverError(error);
+            GeojsonService.importLevel3(function destroyed (error, data) {
+              if (error) return res.serverError(error);
+              importLevel0
+              res.ok();
+            });
+          });
+        });
+      });
     });
   }
 }

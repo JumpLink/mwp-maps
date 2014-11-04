@@ -4,6 +4,10 @@ var xml2js = require('xml2js');
 var xmlParser = new xml2js.Parser();
 var csv = require('csv');
 
+var destroyAll = function (callback) {
+  Geojson.destroy({}).exec(callback);
+}
+
 var importLevel0 = function (callback) {
   GeojsonService.importMapkey('custom/world-highres', callback);
 }
