@@ -300,6 +300,7 @@ var importMapkey = function (mapkey, callback) {
 
 
 module.exports = {
+  destroyAll: destroyAll,
   importMapkey: importMapkey,
   importLevel0: importLevel0,
   importLevel1: importLevel1,
