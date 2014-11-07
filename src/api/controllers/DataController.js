@@ -13,7 +13,7 @@ module.exports = {
     });
   }
   , upload: function (req, res) {
-    sails.log.debug("map/upload",req.file);
+    sails.log.debug("data/upload",req._fileparser.form);
 
     // WORKAROUND for BUG https://github.com/balderdashy/skipper/issues/36
     if(req._fileparser.form.bytesExpected > 10000000) {
@@ -29,8 +29,8 @@ module.exports = {
       }
 
       var saveToDatabaseIterator = function (column, callback) {
-        ModelService.updateOrCreate('Data', column, column.id, function (err, result) {
-          // sails.log.debug(err, result);
+        ModelService.updateOrCreate('Data', column, {"export_nuts2": column["export_nuts2"]}, function (err, result) {
+          sails.log.debug(err, result);
           callback(err, result);
         });
       }
@@ -41,7 +41,7 @@ module.exports = {
         fs.readFile(file.fd, 'utf8', function(err, data) {
           if (err) return res.serverError(err);
           csv.parse(data, {'columns':true}, function(err, columns) {
-            // sails.log.debug(data);
+            sails.log.debug(data);
             async.map(columns, saveToDatabaseIterator, function(err, result){
               // sails.log.debug("toDatabaseSaved")
               callback(err, result);

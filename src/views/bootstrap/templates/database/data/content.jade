@@ -7,23 +7,13 @@
       table.table.table-hover.table-condensed
         thead
             tr
-              th id
-              th district
-              th district_name
-              th number
-              th nuts3
-              th nuts2
-              th nuts1
-              th nuts0
-              th region_name
+              th export_nuts2
+              th import_nuts2
+              th year
+              th value
           tbody
             tr(ng-repeat="dat in data")
-              td {{dat.id}}
-              td {{dat.district}}
-              td {{dat.district_name}}
-              td {{dat.number}}
-              td {{dat.nuts3}}
-              td {{dat.nuts2}}
-              td {{dat.nuts1}}
-              td {{dat.nuts0}}
-              td {{dat.region_name}}
+              td {{dat.export_nuts2}}
+              td {{dat.import_nuts2}}
+              td {{dat.year}}
+              td {{dat.value}}

@@ -179,7 +179,7 @@ jumplink.cms.controller('ToolbarController', function($scope, toolbarService, Fi
     console.log("currentView changed", view);
   });
 
-  $scope.uploader = new FileUploader({url: '/map/upload', removeAfterUpload: true});
+  $scope.uploader = new FileUploader({url: '/data/upload', removeAfterUpload: true});
   $scope.uploader.filters.push({
     name: 'csvFilter',
     fn: function(item /*{File|FileLikeObject}*/, options) {

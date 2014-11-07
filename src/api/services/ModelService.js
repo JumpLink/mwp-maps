@@ -45,7 +45,7 @@ var updateOrCreate = function (modelName, data, id, callback) {
       global[modelName].update(found.id, data).exec(function updated (err, data) {
         if (err) return callback(err);
         // sails.log.debug("update", err, data);
-        global[modelName].publishUpdate(data.id, data);
+        global[modelName].publishUpdate({id: data.id}, data);
         return callback(null, data);
       });
     }

@@ -2,21 +2,21 @@
   .row
     .col-xs-12
       #chart1(highchart, data-chart="chart", config="highchartsNgConfig")
-nav.navbar.navbar-inverse.navbar-fixed-bottom(role="administration", ng-show="$root.authenticated")
-  .container
-    .navbar-left
-      p.navbar-text Admininstration
-    form.navbar-from.navbar-right
-      .btn-group
-        button.btn.btn-warning.navbar-btn(ng-if="add", title="Hinzufügen", ng-click="add()")
-          i.fa.fa-plus
-        button.btn.btn-success.navbar-btn(ng-if="download", title="Herunterladen", ng-click="download()")
-          i.fa.fa-download
-        button.btn.btn-success.navbar-btn(ng-if="refresh", title="Aktualisieren", ng-click="refresh()")
-          i.fa.fa-refresh
-        button.btn.btn-default.navbar-btn(ng-if="toogleHtml", title="HTML-Modus umschalten", ng-click="toogleHtml()")
-          | HTML
-        button.btn.btn-primary.navbar-btn(ng-if="save", title="Speichern", ng-click="save()")
-          i.fa.fa-floppy-o
-      button.btn.btn-default.navbar-btn(title="Einstellungen", bs-dropdown="adminSettingDropdown", ng-click="$event.stopPropagation();", data-template="bootstrap/dropdown", data-placement="top-left", data-html="true")
-        i.fa.fa-cog
+//- nav.navbar.navbar-inverse.navbar-fixed-bottom(role="administration", ng-show="$root.authenticated")
+//-   .container
+//-     .navbar-left
+//-       p.navbar-text Admininstration
+//-     form.navbar-from.navbar-right
+//-       .btn-group
+//-         button.btn.btn-warning.navbar-btn(ng-if="add", title="Hinzufügen", ng-click="add()")
+//-           i.fa.fa-plus
+//-         button.btn.btn-success.navbar-btn(ng-if="download", title="Herunterladen", ng-click="download()")
+//-           i.fa.fa-download
+//-         button.btn.btn-success.navbar-btn(ng-if="refresh", title="Aktualisieren", ng-click="refresh()")
+//-           i.fa.fa-refresh
+//-         button.btn.btn-default.navbar-btn(ng-if="toogleHtml", title="HTML-Modus umschalten", ng-click="toogleHtml()")
+//-           | HTML
+//-         button.btn.btn-primary.navbar-btn(ng-if="save", title="Speichern", ng-click="save()")
+//-           i.fa.fa-floppy-o
+//-       button.btn.btn-default.navbar-btn(title="Einstellungen", bs-dropdown="adminSettingDropdown", ng-click="$event.stopPropagation();", data-template="bootstrap/dropdown", data-placement="top-left", data-html="true")
+//-         i.fa.fa-cog
