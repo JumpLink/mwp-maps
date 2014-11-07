@@ -84,19 +84,62 @@ jumplink.cms.config( function($stateProvider, $urlRouterProvider, $locationProvi
       // }
     }
   })
-  .state('bootstrap-layout.database', {
-    url: '/database'
+  // database
+  .state('bootstrap-layout.database-data', {
+    url: '/database/data'
     , resolve:{
-      mapDatabase: function($sailsSocket) {
-        return $sailsSocket.get('/map?limit=0', {}).then (function (data) {
+      data: function($sailsSocket, $log) {
+        return $sailsSocket.get('/data?limit=0', {}).then (function (data) {
           return data.data;
         });
       }
     }
     , views: {
       'content' : {
-        templateUrl: 'bootstrap/database/content'
-        , controller: 'DatabaseController'
+        templateUrl: 'bootstrap/database/data/content'
+        , controller: 'DatabaseDataController'
+      }
+      , 'toolbar' : {
+        templateUrl: 'bootstrap/toolbar'
+        , controller: 'ToolbarController'
+      }
+    }
+  })
+  .state('bootstrap-layout.database-geojson', {
+    url: '/database/geojson'
+    , resolve:{
+      geojson: function($sailsSocket, $log) {
+        return $sailsSocket.get('/geojson?limit=0', {}).then (function (data) {
+          $log.debug(data);
+          return data.data;
+        });
+      }
+    }
+    , views: {
+      'content' : {
+        templateUrl: 'bootstrap/database/geojson/content'
+        , controller: 'DatabaseGeojsonController'
+      }
+      , 'toolbar' : {
+        templateUrl: 'bootstrap/toolbar'
+        , controller: 'ToolbarController'
+      }
+    }
+  })
+  .state('bootstrap-layout.database-nuts', {
+    url: '/database/nuts'
+    , resolve:{
+      nuts: function($sailsSocket, $log) {
+        return $sailsSocket.get('/nuts?limit=0', {}).then (function (data) {
+          $log.debug(data);
+          return data.data;
+        });
+      }
+    }
+    , views: {
+      'content' : {
+        templateUrl: 'bootstrap/database/nuts/content'
+        , controller: 'DatabaseNutsController'
       }
       , 'toolbar' : {
         templateUrl: 'bootstrap/toolbar'

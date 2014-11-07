@@ -12,7 +12,7 @@
         a(ui-sref='bootstrap-layout.home') Startseite
       li(data-match-route='/*map*')
         a(ui-sref='bootstrap-layout.map') Karte
-      li(data-match-route='/*database*')
+      li(data-match-route='/*database*', title="Datenbank", bs-dropdown="databaseDropdown", data-template="bootstrap/dropdown", data-placement="bottom-left", data-html="true")
         a(ui-sref='bootstrap-layout.database') Datenbank
       li(data-match-route='/*admin*', title="Einstellungen", bs-dropdown="adminSettingDropdown", data-template="bootstrap/dropdown", data-placement="bottom-left", data-html="true")
         a Einstellungen

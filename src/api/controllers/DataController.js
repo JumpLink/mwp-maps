@@ -7,8 +7,8 @@ module.exports = {
   update: function (req, res, next) {
     var id = req.param('id');
     var data = req.params.all();
-    Map.update({id:id},data).exec(function update(err,updated){
-      Map.publishUpdate(updated[0].id, updated[0]);
+    Data.update({id:id},data).exec(function update(err,updated){
+      Data.publishUpdate(updated[0].id, updated[0]);
       res.json(updated);
     });
   }
@@ -29,7 +29,7 @@ module.exports = {
       }
 
       var saveToDatabaseIterator = function (column, callback) {
-        ModelService.updateOrCreate('Map', column, column.id, function (err, result) {
+        ModelService.updateOrCreate('Data', column, column.id, function (err, result) {
           // sails.log.debug(err, result);
           callback(err, result);
         });

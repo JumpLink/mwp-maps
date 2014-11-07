@@ -29,7 +29,9 @@ html(lang="en", ng-app="jumplink.cms", ng-controller="AppController", ng-init="$
     script(type="text/ng-template", id="bootstrap/map/content"): include ./templates/map/content.jade
     script(type="text/ng-template", id="bootstrap/map/editmembermodal"): include ./templates/map/editmembermodal.jade
     //- database
-    script(type="text/ng-template", id="bootstrap/database/content"): include ./templates/database/content.jade
+    script(type="text/ng-template", id="bootstrap/database/data/content"): include ./templates/database/data/content.jade
+    script(type="text/ng-template", id="bootstrap/database/geojson/content"): include ./templates/database/geojson/content.jade
+    script(type="text/ng-template", id="bootstrap/database/nuts/content"): include ./templates/database/nuts/content.jade
     //- imprint
     script(type="text/ng-template", id="bootstrap/imprint/content"): include ./templates/imprint/content.jade
     //- admin

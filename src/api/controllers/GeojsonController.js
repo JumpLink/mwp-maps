@@ -137,7 +137,6 @@ module.exports = {
             if (error) return res.serverError(error);
             GeojsonService.importLevel3(function destroyed (error, data) {
               if (error) return res.serverError(error);
-              importLevel0
               res.ok();
             });
           });

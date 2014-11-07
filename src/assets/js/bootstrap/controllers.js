@@ -160,21 +160,6 @@ jumplink.cms.controller('AppController', function($rootScope, $scope, $state, $w
     });
   }
 
-  $scope.adminSettingDropdown = [
-    {
-      "text": "<i class=\"fa fa-list\"></i>&nbsp;Übersicht",
-      "click": "goToState('bootstrap-layout.administration')"
-    },
-    {
-      "text": "<i class=\"fa fa-users\"></i>&nbsp;Benutzer",
-      "click": "goToState('bootstrap-layout.users')"
-    },
-    {
-      "text": "<i class=\"fa fa-sign-out\"></i>&nbsp;Abmelden",
-      "click": "$root.logout()"
-    }
-  ];
-
   $scope.goToState = function (to, params, options) {
     $state.go(to, params, options)
   }
@@ -203,16 +188,59 @@ jumplink.cms.controller('ToolbarController', function($scope, toolbarService, Fi
     }
   });
 
+  $scope.databaseDropdown = [
+    {
+      "text": "Geojson",
+      "click": "goToState('bootstrap-layout.database-geojson')"
+    },
+    {
+      "text": "Nuts",
+      "click": "goToState('bootstrap-layout.database-nuts')"
+    },
+    {
+      "text": "Data",
+      "click": "goToState('bootstrap-layout.database-data')"
+    }
+  ];
+
+  $scope.adminSettingDropdown = [
+    {
+      "text": "<i class=\"fa fa-list\"></i>&nbsp;Übersicht",
+      "click": "goToState('bootstrap-layout.administration')"
+    },
+    {
+      "text": "<i class=\"fa fa-users\"></i>&nbsp;Benutzer",
+      "click": "goToState('bootstrap-layout.users')"
+    },
+    {
+      "text": "<i class=\"fa fa-sign-out\"></i>&nbsp;Abmelden",
+      "click": "$root.logout()"
+    }
+  ];
+
 });
 
 jumplink.cms.controller('FooterController', function($scope) {
 
 });
 
-jumplink.cms.controller('DatabaseController', function($scope, toolbarService, mapDatabase) {
-  $scope.mapDatabase = mapDatabase;
+jumplink.cms.controller('DatabaseDataController', function($scope, toolbarService, data) {
+  $scope.data = data;
   toolbarService.prepearView('database');
 });
+
+
+jumplink.cms.controller('DatabaseGeojsonController', function($scope, toolbarService, geojson) {
+  $scope.geojson = geojson;
+  toolbarService.prepearView('database');
+});
+
+jumplink.cms.controller('DatabaseNutsController', function($scope, toolbarService, nuts) {
+  $scope.nuts = nuts;
+  toolbarService.prepearView('database');
+});
+
+
 
 jumplink.cms.controller('HomeContentController', function($scope, $rootScope, $sailsSocket, $location, $anchorScroll, $timeout, $window, about, goals, $log) {
 
