@@ -57,4 +57,24 @@ module.exports = {
       res.ok();
     });
   }
+
+  , findByLevel: function (req, res, next) {
+    var level = Number(req.param('level'));
+    sails.log.debug("findByLevel", level);
+    if(level < 0 || level > 3)
+      return res.serverError("wrong level: "+level);
+    Nuts.find({level:level}).exec(function destroyed (error, data) {
+      if (error) return res.serverError(error);
+      res.json(data);
+    });
+  }
+  , findByCode: function (req, res, next) {
+    var code = req.param('code');
+    sails.log.debug("findByCode", code);
+    if(!code) return res.serverError("wrong code: "+code);
+    Nuts.find({nutscode:code}).exec(function destroyed (error, data) {
+      if (error) return res.serverError(error);
+      res.json(data);
+    });
+  }
 }

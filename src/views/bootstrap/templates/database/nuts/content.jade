@@ -3,27 +3,26 @@
     .col-xs-12
       .page-header
         h1 Datenbank
-      h2 Nuts Werte
+      h2 Nuts Level {{level}}
       table.table.table-hover.table-condensed
         thead
             tr
-              th id
-              th district
-              th district_name
-              th number
-              th nuts3
-              th nuts2
-              th nuts1
-              th nuts0
-              th region_name
+              th nutscode
+              //- th(ng-if="level >= 1") nutsubcode
+              th label
+              th hasc
+              th typ
+              th(ng-if="level >= 1") parent
+              th(ng-if="level <= 2") childs
           tbody
             tr(ng-repeat="nut in nuts")
-              td {{data.id}}
-              td {{data.district}}
-              td {{data.district_name}}
-              td {{data.number}}
-              td {{data.nuts3}}
-              td {{data.nuts2}}
-              td {{data.nuts1}}
-              td {{data.nuts0}}
-              td {{data.region_name}}
+              td {{nut.nutscode}}
+              //- td(ng-if="level >= 1") {{nut.nutsubcode}}
+              td {{nut.label}}
+              td {{nut.hasc}}
+              td {{nut.typ}}
+              td(ng-if="level >= 1")
+                a(ui-sref="bootstrap-layout.database-nuts-code({code:nut.parent})") {{nut.parent}}
+              td(ng-if="level <= 2")
+                span(ng-repeat="child in nut.childs")
+                  a(ui-sref="bootstrap-layout.database-nuts-code({code:child})") {{child+" "}}

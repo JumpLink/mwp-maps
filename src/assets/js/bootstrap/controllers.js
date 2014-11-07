@@ -195,7 +195,11 @@ jumplink.cms.controller('ToolbarController', function($scope, toolbarService, Fi
     },
     {
       "text": "Nuts",
-      "click": "goToState('bootstrap-layout.database-nuts')"
+      "click": "goToState('bootstrap-layout.database-nuts-level', {level:0})"
+    },
+    {
+      "text": "Features",
+      "click": "goToState('bootstrap-layout.database-features')"
     },
     {
       "text": "Data",
@@ -235,8 +239,9 @@ jumplink.cms.controller('DatabaseGeojsonController', function($scope, toolbarSer
   toolbarService.prepearView('database');
 });
 
-jumplink.cms.controller('DatabaseNutsController', function($scope, toolbarService, nuts) {
+jumplink.cms.controller('DatabaseNutsController', function($scope, toolbarService, nuts, $stateParams) {
   $scope.nuts = nuts;
+  $scope.level = $stateParams.level;
   toolbarService.prepearView('database');
 });
 

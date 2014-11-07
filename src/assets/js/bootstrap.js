@@ -126,11 +126,32 @@ jumplink.cms.config( function($stateProvider, $urlRouterProvider, $locationProvi
       }
     }
   })
-  .state('bootstrap-layout.database-nuts', {
-    url: '/database/nuts'
+  .state('bootstrap-layout.database-nuts-level', {
+    url: '/database/nuts/level/:level'
     , resolve:{
-      nuts: function($sailsSocket, $log) {
-        return $sailsSocket.get('/nuts?limit=0', {}).then (function (data) {
+      nuts: function($sailsSocket, $log, $stateParams) {
+        return $sailsSocket.post('/nuts/findByLevel', {level: $stateParams.level}).then (function (data) {
+          $log.debug(data);
+          return data.data;
+        });
+      }
+    }
+    , views: {
+      'content' : {
+        templateUrl: 'bootstrap/database/nuts/content'
+        , controller: 'DatabaseNutsController'
+      }
+      , 'toolbar' : {
+        templateUrl: 'bootstrap/toolbar'
+        , controller: 'ToolbarController'
+      }
+    }
+  })
+  .state('bootstrap-layout.database-nuts-code', {
+    url: '/database/nuts/code/:code'
+    , resolve:{
+      nuts: function($sailsSocket, $log, $stateParams) {
+        return $sailsSocket.post('/nuts/findByCode', {code: $stateParams.code}).then (function (data) {
           $log.debug(data);
           return data.data;
         });
