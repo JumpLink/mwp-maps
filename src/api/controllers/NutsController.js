@@ -68,6 +68,7 @@ module.exports = {
       res.json(data);
     });
   }
+  // example: http://localhost:1338/nuts/findbycode?code=DE
   , findByCode: function (req, res, next) {
     var code = req.param('code');
     sails.log.debug("findByCode", code);

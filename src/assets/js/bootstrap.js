@@ -105,11 +105,18 @@ jumplink.cms.config( function($stateProvider, $urlRouterProvider, $locationProvi
       }
     }
   })
-  .state('bootstrap-layout.database-geojson', {
-    url: '/database/geojson'
+  .state('bootstrap-layout.database-geojson-mapkey', {
+    url: '/database/geojson-mapkey/:mapkey1/:mapkey2/:mapkey3'
     , resolve:{
-      geojson: function($sailsSocket, $log) {
-        return $sailsSocket.get('/geojson?limit=0', {}).then (function (data) {
+      geojson: function($sailsSocket, $stateParams, $log) {
+        // WORKAROUND
+        var mapkey = $stateParams.mapkey1;
+        if($stateParams.mapkey2)
+            mapkey += "/"+$stateParams.mapkey2;
+        if($stateParams.mapkey3)
+            mapkey += "/"+$stateParams.mapkey3;
+        $log.debug('bootstrap-layout.database-geojson-mapkey', mapkey);
+        return $sailsSocket.post('/geojson/findByMapkey', {mapkey:mapkey}).then (function (data) {
           $log.debug(data);
           return data.data;
         });
@@ -119,6 +126,48 @@ jumplink.cms.config( function($stateProvider, $urlRouterProvider, $locationProvi
       'content' : {
         templateUrl: 'bootstrap/database/geojson/content'
         , controller: 'DatabaseGeojsonController'
+      }
+      , 'toolbar' : {
+        templateUrl: 'bootstrap/toolbar'
+        , controller: 'ToolbarController'
+      }
+    }
+  })
+  .state('bootstrap-layout.database-geojson-all', {
+    url: '/database/geojson'
+    , resolve:{
+      geojson: function($sailsSocket, $log) {
+        return $sailsSocket.get('/geojson/findAll', {}).then (function (data) {
+          $log.debug(data);
+          return data.data;
+        });
+      }
+    }
+    , views: {
+      'content' : {
+        templateUrl: 'bootstrap/database/geojson/content'
+        , controller: 'DatabaseGeojsonController'
+      }
+      , 'toolbar' : {
+        templateUrl: 'bootstrap/toolbar'
+        , controller: 'ToolbarController'
+      }
+    }
+  })
+  .state('bootstrap-layout.database-mapkey', {
+    url: '/database/mapkey'
+    , resolve:{
+      mapkeys: function($sailsSocket, $log) {
+        return $sailsSocket.get('/geojson/mapkeys', {}).then (function (data) {
+          $log.debug(data);
+          return data.data;
+        });
+      }
+    }
+    , views: {
+      'content' : {
+        templateUrl: 'bootstrap/database/mapkey/content'
+        , controller: 'DatabaseMapkeyController'
       }
       , 'toolbar' : {
         templateUrl: 'bootstrap/toolbar'
@@ -168,12 +217,54 @@ jumplink.cms.config( function($stateProvider, $urlRouterProvider, $locationProvi
       }
     }
   })
+  .state('bootstrap-layout.database-feature', {
+    url: '/database/feature'
+    , resolve:{
+      features: function($sailsSocket, $log, $stateParams) {
+        return $sailsSocket.post('/feature/findAll', {}).then (function (data) {
+          $log.debug(data);
+          return data.data;
+        });
+      }
+    }
+    , views: {
+      'content' : {
+        templateUrl: 'bootstrap/database/feature/content'
+        , controller: 'DatabaseFeatureController'
+      }
+      , 'toolbar' : {
+        templateUrl: 'bootstrap/toolbar'
+        , controller: 'ToolbarController'
+      }
+    }
+  })
+  .state('bootstrap-layout.database-feature-hasc', {
+    url: '/database/feature/hasc/:hasc'
+    , resolve:{
+      features: function($sailsSocket, $log, $stateParams) {
+        return $sailsSocket.post('/feature/findByHasc', {hasc: $stateParams.hasc}).then (function (data) {
+          $log.debug(data);
+          return data.data;
+        });
+      }
+    }
+    , views: {
+      'content' : {
+        templateUrl: 'bootstrap/database/feature/content'
+        , controller: 'DatabaseFeatureController'
+      }
+      , 'toolbar' : {
+        templateUrl: 'bootstrap/toolbar'
+        , controller: 'ToolbarController'
+      }
+    }
+  })
   // imprint
   .state('bootstrap-layout.imprint', {
     url: '/imprint'
     , resolve:{
       imprint: function($sailsSocket) {
-        return $sailsSocket.get('/content?name=imprint', {name: 'imprint'}).then (function (data) {
+        return $sailsSocket.post('/content?name=imprint', {name: 'imprint'}).then (function (data) {
           return html_beautify(data.data[0].content);
         });
       }

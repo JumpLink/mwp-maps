@@ -190,8 +190,8 @@ jumplink.cms.controller('ToolbarController', function($scope, toolbarService, Fi
 
   $scope.databaseDropdown = [
     {
-      "text": "Geojson",
-      "click": "goToState('bootstrap-layout.database-geojson')"
+      "text": "Mapkeys",
+      "click": "goToState('bootstrap-layout.database-mapkey')"
     },
     {
       "text": "Nuts",
@@ -199,7 +199,7 @@ jumplink.cms.controller('ToolbarController', function($scope, toolbarService, Fi
     },
     {
       "text": "Features",
-      "click": "goToState('bootstrap-layout.database-features')"
+      "click": "goToState('bootstrap-layout.database-feature')"
     },
     {
       "text": "Data",
@@ -245,7 +245,15 @@ jumplink.cms.controller('DatabaseNutsController', function($scope, toolbarServic
   toolbarService.prepearView('database');
 });
 
+jumplink.cms.controller('DatabaseFeatureController', function($scope, toolbarService, features, $stateParams) {
+  $scope.features = features;
+  toolbarService.prepearView('database');
+});
 
+jumplink.cms.controller('DatabaseMapkeyController', function($scope, $state, toolbarService, mapkeys, $stateParams, $log) {
+  $scope.mapkeys = mapkeys;
+  toolbarService.prepearView('database');
+});
 
 jumplink.cms.controller('HomeContentController', function($scope, $rootScope, $sailsSocket, $location, $anchorScroll, $timeout, $window, about, goals, $log) {
 

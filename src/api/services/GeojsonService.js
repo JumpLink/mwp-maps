@@ -12,25 +12,27 @@ var importLevel0 = function (callback) {
   GeojsonService.importMapkey('custom/world-highres', callback);
 }
 
+var level1Mapkeys = [
+  'countries/af/af-all', // Afghanistan
+  'countries/al/al-all', // Albania
+  'countries/dz/dz-all', // Algeria
+  'countries/as/as-all', // American Samoa
+  'countries/ad/ad-all', // Andorra
+  'countries/ao/ao-all', // Angola
+  'countries/ag/ag-all', // Antigua and Barbuda
+  'countries/ar/ar-all', // Argentina
+  'countries/am/am-all', // Armenia
+  'countries/au/au-all', // Australia
+  'countries/at/at-all', // Austria
+  'countries/az/az-all', // Azerbaijan
+  // ..
+  'countries/de/de-all', // Germany
+  // ..
+];
+
 var importLevel1 = function (callback) {
   //TODO more contries: http://code.highcharts.com/mapdata/
-  var mapkeys = [
-    'countries/af/af-all', // Afghanistan
-    'countries/al/al-all', // Albania
-    'countries/dz/dz-all', // Algeria
-    'countries/as/as-all', // American Samoa
-    'countries/ad/ad-all', // Andorra
-    'countries/ao/ao-all', // Angola
-    'countries/ag/ag-all', // Antigua and Barbuda
-    'countries/ar/ar-all', // Argentina
-    'countries/am/am-all', // Armenia
-    'countries/au/au-all', // Australia
-    'countries/at/at-all', // Austria
-    'countries/az/az-all', // Azerbaijan
-    // ..
-    'countries/de/de-all', // Germany
-    // ..
-  ];
+  var mapkeys = level1Mapkeys;
 
   var iterator = function (mapkey, callback) {
     GeojsonService.importMapkey(mapkey, callback);
@@ -38,27 +40,29 @@ var importLevel1 = function (callback) {
 
   async.map(mapkeys, iterator, callback);
 }
+
+var level2Mapkeys = [
+  'countries/de/de-bw-all',
+  'countries/de/de-by-all',
+  'countries/de/de-be-all',
+  'countries/de/de-bb-all',
+  'countries/de/de-hb-all',
+  'countries/de/de-hh-all',
+  'countries/de/de-he-all',
+  'countries/de/de-mv-all',
+  'countries/de/de-ni-all',
+  'countries/de/de-nw-all',
+  'countries/de/de-rp-all',
+  'countries/de/de-sl-all',
+  'countries/de/de-sn-all',
+  'countries/de/de-st-all',
+  'countries/de/de-sh-all',
+  'countries/de/de-th-all',
+];
 
 var importLevel2 = function (callback) {
   //TODO more contries: http://code.highcharts.com/mapdata/
-  var mapkeys = [
-    'countries/de/de-bw-all',
-    'countries/de/de-by-all',
-    'countries/de/de-be-all',
-    'countries/de/de-bb-all',
-    'countries/de/de-hb-all',
-    'countries/de/de-hh-all',
-    'countries/de/de-he-all',
-    'countries/de/de-mv-all',
-    'countries/de/de-ni-all',
-    'countries/de/de-nw-all',
-    'countries/de/de-rp-all',
-    'countries/de/de-sl-all',
-    'countries/de/de-sn-all',
-    'countries/de/de-st-all',
-    'countries/de/de-sh-all',
-    'countries/de/de-th-all',
-  ];
+  var mapkeys = level2Mapkeys;
 
   var iterator = function (mapkey, callback) {
     GeojsonService.importMapkey(mapkey, callback);
@@ -67,26 +71,28 @@ var importLevel2 = function (callback) {
   async.map(mapkeys, iterator, callback);
 }
 
+var level3Mapkeys = [
+  'countries/de/de-bw-all-all',
+  'countries/de/de-by-all-all',
+  'countries/de/de-be-all-all',
+  'countries/de/de-bb-all-all',
+  'countries/de/de-hb-all-all',
+  'countries/de/de-hh-all-all',
+  'countries/de/de-he-all-all',
+  'countries/de/de-mv-all-all',
+  'countries/de/de-ni-all-all',
+  'countries/de/de-nw-all-all',
+  'countries/de/de-rp-all-all',
+  'countries/de/de-sl-all-all',
+  'countries/de/de-sn-all-all',
+  'countries/de/de-st-all-all',
+  'countries/de/de-sh-all-all',
+  'countries/de/de-th-all-all',
+];
+
 var importLevel3 = function (callback) {
   //TODO more contries: http://code.highcharts.com/mapdata/
-  var mapkeys = [
-    'countries/de/de-bw-all-all',
-    'countries/de/de-by-all-all',
-    'countries/de/de-be-all-all',
-    'countries/de/de-bb-all-all',
-    'countries/de/de-hb-all-all',
-    'countries/de/de-hh-all-all',
-    'countries/de/de-he-all-all',
-    'countries/de/de-mv-all-all',
-    'countries/de/de-ni-all-all',
-    'countries/de/de-nw-all-all',
-    'countries/de/de-rp-all-all',
-    'countries/de/de-sl-all-all',
-    'countries/de/de-sn-all-all',
-    'countries/de/de-st-all-all',
-    'countries/de/de-sh-all-all',
-    'countries/de/de-th-all-all',
-  ];
+  var mapkeys =level3Mapkeys;
 
   var iterator = function (mapkey, callback) {
     GeojsonService.importMapkey(mapkey, callback);
@@ -298,6 +304,13 @@ var importMapkey = function (mapkey, callback) {
   });
 }
 
+var getMapkeys = function () {
+  return {
+    level1: level1Mapkeys,
+    level2: level2Mapkeys,
+    level3: level3Mapkeys,
+  }
+}
 
 module.exports = {
   destroyAll: destroyAll,
@@ -306,4 +319,8 @@ module.exports = {
   importLevel1: importLevel1,
   importLevel2: importLevel2,
   importLevel3: importLevel3,
+  level1Mapkeys: level1Mapkeys,
+  level2Mapkeys: level2Mapkeys,
+  level3Mapkeys: level3Mapkeys,
+  getMapkeys: getMapkeys
 }

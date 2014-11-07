@@ -23,4 +23,28 @@ module.exports = {
     });
     sails.log.debug("feature/import");
   }
+  // example: http://localhost:1338/feature/findbyhasc
+  , findByHasc: function (req, res, next) {
+    var hasc = req.param('hasc');
+    sails.log.debug("feature/findByHasc", hasc);
+    if(!hasc) return res.serverError("wrong hasc: "+hasc);
+    Feature.find({ where: {'properties.hasc':hasc}}).exec(function destroyed (error, data) {
+      if (error) return res.serverError(error);
+      res.json(data);
+    });
+    // Feature.native(function(err, collection) {
+    //   // Handle Errors
+    //   collection.find({'properties.hasc':hasc}).done(function(error, docs) {
+    //     // Handle Errors
+    //     // Do mongo-y things to your docs here
+    //   });
+    // });
+  }
+  , findAll: function (req, res, next) {
+    sails.log.debug('feature/findAll');
+    Feature.find({ limit:0 }).exec(function destroyed (error, data) {
+      if (error) return res.serverError(error);
+      res.json(data);
+    });
+  }
 }
