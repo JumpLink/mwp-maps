@@ -242,6 +242,7 @@ jumplink.cms.controller('DatabaseGeojsonController', function($scope, toolbarSer
 jumplink.cms.controller('DatabaseNutsController', function($scope, toolbarService, nuts, $stateParams) {
   $scope.nuts = nuts;
   $scope.level = $stateParams.level;
+  $scope.code = $stateParams.code
   toolbarService.prepearView('database');
 });
 
