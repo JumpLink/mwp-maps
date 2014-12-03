@@ -16,7 +16,6 @@ var updateOrCreateResponse = function (modelName, findBy, req, res, next) {
 
 }
 
-// warn this creates each time a new id
 var updateOrCreate = function (modelName, data, id, callback) {
   // sails.log.debug("updateOrCreate", modelName, data, id);
   // sails.log.debug("global[modelName]", global[modelName]);
@@ -34,18 +33,19 @@ var updateOrCreate = function (modelName, data, id, callback) {
     if (found instanceof Array) found = found[0];
     // sails.log.debug("found", err, found);
     // not found
-    if (!found || found.length <= 0)
+    if (!found || found.length <= 0) {
       global[modelName].create(data).exec(function created (err, data) {
         if (err) return callback(err);
         // sails.log.debug("created", err, data);
         global[modelName].publishCreate(data);
         return callback(null, data);
       });
-    else {
+    } else {
       global[modelName].update(found.id, data).exec(function updated (err, data) {
         if (err) return callback(err);
+        if (data instanceof Array) data = data[0];
         // sails.log.debug("update", err, data);
-        global[modelName].publishUpdate({id: data.id}, data);
+        global[modelName].publishUpdate(found.id, data);
         return callback(null, data);
       });
     }
