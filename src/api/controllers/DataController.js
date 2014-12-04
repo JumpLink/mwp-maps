@@ -24,17 +24,6 @@ async.objectMapSeries = function ( obj, drag, func, cb ) {
   });
 }
 
-// // http://stackoverflow.com/questions/7440001/iterate-over-object-keys-in-node-js
-// async.forEach = function(o, cb) {
-//   var counter = 0,
-//     keys = Object.keys(o),
-//     len = keys.length;
-//   var next = function() {
-//     if (counter < len) cb(o[keys[counter++]], next);
-//   };
-//   next();
-// };
-
 module.exports = {
 
   destroyAll: function (req, res, next) {
@@ -122,9 +111,6 @@ module.exports = {
       });
 
     });
-
-
-
   }
 
   , upload: function (req, res) {

@@ -6,14 +6,50 @@
       h2 Transport Werte
       table.table.table-hover.table-condensed
         thead
-            tr
-              th export_nuts3
-              th import_nuts3
-              th year
-              th value
-          tbody
-            tr(ng-repeat="dat in data")
-              td {{dat.export_nuts3}}
-              td {{dat.import_nuts3}}
-              td {{dat.year}}
-              td {{dat.value}}
+          tr
+            th nutscode
+            th exports
+            th imports
+        tbody
+          tr(ng-repeat="dat in data")
+            td {{dat.nutscode}}
+            //- exports
+            td
+              table.table.table-hover.table-condensed(ng-show="dat.exports")
+                thead
+                  tr
+                    th nutscodes
+                    th years
+                tbody
+                  tr(ng-repeat="(exkey, exval) in dat.exports")
+                    td {{exkey}}
+                    td
+                      table.table.table-hover.table-condensed(ng-show="exval")
+                        thead
+                          tr
+                            th year
+                            th value
+                        tbody
+                          tr(ng-repeat="(year, value) in exval")
+                            td {{year}}
+                            td {{value}}
+            //- imports
+            td
+              table.table.table-hover.table-condensed(ng-show="dat.imports")
+                thead
+                  tr
+                    th nutscodes
+                    th years
+                tbody
+                  tr(ng-repeat="(imkey, imval) in dat.imports")
+                    td {{imkey}}
+                    td
+                      table.table.table-hover.table-condensed(ng-show="imval")
+                        thead
+                          tr
+                            th year
+                            th value
+                        tbody
+                          tr(ng-repeat="(year, value) in imval")
+                            td {{year}}
+                            td {{value}}
