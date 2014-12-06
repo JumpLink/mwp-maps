@@ -4,13 +4,15 @@
       .page-header
         h1 Datenbank
       h2 Highmap Mapkey's
-      span(ng-repeat="(level, levelmapkeys) in mapkeys")
-        h3 {{level}}
-        table.table.table-hover.table-condensed
-          thead
-              tr
-                th mapkey
-            tbody
-              tr(ng-repeat="mapkey in levelmapkeys")
-                td
-                  a(ng-href="/#/database/geojson-mapkey/{{mapkey}}") {{mapkey}}
+      table.table.table-hover.table-condensed
+        thead
+          tr
+            th mapkey
+            th adminlevel
+            th nutslevel
+        tbody
+          tr(ng-repeat="mapkey in mapkeys")
+            td
+              a(ng-href="/#/database/geojson-mapkey/{{mapkey.mapkey}}") {{mapkey.mapkey}}
+            td {{mapkey.adminlevel}}
+            td {{mapkey.nutslevel}}

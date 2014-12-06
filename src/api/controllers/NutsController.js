@@ -3,7 +3,7 @@ var fs = require('fs-extra'); // Node.js: extra methods for the fs object: https
 var http = require('http');
 
 module.exports = {
-  // example: http://localhost:1338/geojson/import?mapkey=custom/world-highres
+  // example: http://localhost:1338/nuts/import
   import: function (req, res, next) {
     NutsService.importer2010(function (error, result) {
       if (error) return res.serverError(error);
@@ -22,11 +22,22 @@ module.exports = {
             if (error) return res.serverError(error);
             NutsService.importerHascDeLevel1(function (error, result) {
               if (error) return res.serverError(error);
-              res.ok();
+              NutsService.importerHascLevel0(function (error, result) {
+                if (error) return res.serverError(error);
+                res.ok();
+              });
             });
           });
         });
       });
+    });
+  }
+
+  // example: http://localhost:1338/nuts/importerHascLevel0
+  , importerHascLevel0: function (req, res, next) {
+    NutsService.importerHascLevel0(function (error, result) {
+      if (error) return res.serverError(error);
+      res.json(result);
     });
   }
 

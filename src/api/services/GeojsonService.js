@@ -9,96 +9,52 @@ var destroyAll = function (callback) {
 }
 
 var importLevel0 = function (callback) {
-  GeojsonService.importMapkey('custom/world-highres', callback);
-}
 
-var level1Mapkeys = [
-  'countries/af/af-all', // Afghanistan
-  'countries/al/al-all', // Albania
-  'countries/dz/dz-all', // Algeria
-  'countries/as/as-all', // American Samoa
-  'countries/ad/ad-all', // Andorra
-  'countries/ao/ao-all', // Angola
-  'countries/ag/ag-all', // Antigua and Barbuda
-  'countries/ar/ar-all', // Argentina
-  'countries/am/am-all', // Armenia
-  'countries/au/au-all', // Australia
-  'countries/at/at-all', // Austria
-  'countries/az/az-all', // Azerbaijan
-  // ..
-  'countries/de/de-all', // Germany
-  // ..
-];
+  var iterator = function (mapkey, callback) {
+    GeojsonService.importMapkey(mapkey, callback);
+  }
+
+  Mapkey.find({adminlevel:0}).exec(function found(err, mapkeys) {
+    if (err) return callback(err);
+     async.map(mapkeys, iterator, callback);
+  });
+}
 
 var importLevel1 = function (callback) {
-  //TODO more contries: http://code.highcharts.com/mapdata/
-  var mapkeys = level1Mapkeys;
 
   var iterator = function (mapkey, callback) {
     GeojsonService.importMapkey(mapkey, callback);
   }
 
-  async.map(mapkeys, iterator, callback);
+  Mapkey.find({adminlevel:1}).exec(function found(err, mapkeys) {
+    if (err) return callback(err);
+     async.map(mapkeys, iterator, callback);
+  });
 }
 
-var level2Mapkeys = [
-  'countries/de/de-bw-all',
-  'countries/de/de-by-all',
-  'countries/de/de-be-all',
-  'countries/de/de-bb-all',
-  'countries/de/de-hb-all',
-  'countries/de/de-hh-all',
-  'countries/de/de-he-all',
-  'countries/de/de-mv-all',
-  'countries/de/de-ni-all',
-  'countries/de/de-nw-all',
-  'countries/de/de-rp-all',
-  'countries/de/de-sl-all',
-  'countries/de/de-sn-all',
-  'countries/de/de-st-all',
-  'countries/de/de-sh-all',
-  'countries/de/de-th-all',
-];
 
 var importLevel2 = function (callback) {
-  //TODO more contries: http://code.highcharts.com/mapdata/
-  var mapkeys = level2Mapkeys;
 
   var iterator = function (mapkey, callback) {
     GeojsonService.importMapkey(mapkey, callback);
   }
 
-  async.map(mapkeys, iterator, callback);
+  Mapkey.find({adminlevel:2}).exec(function found(err, mapkeys) {
+    if (err) return callback(err);
+     async.map(mapkeys, iterator, callback);
+  });
 }
 
-var level3Mapkeys = [
-  'countries/de/de-bw-all-all',
-  'countries/de/de-by-all-all',
-  'countries/de/de-be-all-all',
-  'countries/de/de-bb-all-all',
-  'countries/de/de-hb-all-all',
-  'countries/de/de-hh-all-all',
-  'countries/de/de-he-all-all',
-  'countries/de/de-mv-all-all',
-  'countries/de/de-ni-all-all',
-  'countries/de/de-nw-all-all',
-  'countries/de/de-rp-all-all',
-  'countries/de/de-sl-all-all',
-  'countries/de/de-sn-all-all',
-  'countries/de/de-st-all-all',
-  'countries/de/de-sh-all-all',
-  'countries/de/de-th-all-all',
-];
-
 var importLevel3 = function (callback) {
-  //TODO more contries: http://code.highcharts.com/mapdata/
-  var mapkeys =level3Mapkeys;
 
   var iterator = function (mapkey, callback) {
     GeojsonService.importMapkey(mapkey, callback);
   }
 
-  async.map(mapkeys, iterator, callback);
+  Mapkey.find({adminlevel:3}).exec(function found(err, mapkeys) {
+    if (err) return callback(err);
+     async.map(mapkeys, iterator, callback);
+  });
 }
 
 // mapkey e.g.: 'custom/world-highres' | 'de-all-all' | 'countries/de/de-hh-all-all'
@@ -155,7 +111,7 @@ var importMapkey = function (mapkey, callback) {
           if(!feature.properties['hasc'])
             feature.properties['hasc'] = feature.properties['hasc0'] + "." +feature.properties['hasc1'] + "." + feature.properties['hasc2'];
         break;
-        case 3:
+        case 3: // FIXME
           if(feature.properties['hc-a2'])
             feature.properties['hasc3'] = feature.properties['hc-a2'];
           if(!feature.properties['hasc'])
@@ -172,7 +128,7 @@ var importMapkey = function (mapkey, callback) {
   var nutslevel = null;
   var nutscode = null;
 
-  switch(mapkey) {
+  switch(mapkey.mapkey) {
     case 'custom/world-highres':
       adminlevel = 0;
     break;
@@ -259,7 +215,8 @@ var importMapkey = function (mapkey, callback) {
     break;
   }
 
-  var url = 'http://code.highcharts.com/mapdata/'+mapkey+'.geo.json';
+  var url = 'http://code.highcharts.com/mapdata/'+mapkey.mapkey+'.geo.json';
+  sails.log.debug(url, mapkey);
 
   http.get(url, function(resp) {
       var body = '';
@@ -271,7 +228,7 @@ var importMapkey = function (mapkey, callback) {
       resp.on('end', function() {
           var geoJsonResponse = JSON.parse(body)
           sails.log.debug("Got response: ", geoJsonResponse);
-          geoJsonResponse.mapkey = mapkey;
+          geoJsonResponse.mapkey = mapkey.mapkey;
           if(adminlevel != null) {
             geoJsonResponse.adminlevel = adminlevel;
           }
@@ -289,7 +246,7 @@ var importMapkey = function (mapkey, callback) {
             if (error) return callback(error);
             geoJsonResponse.features = features;
 
-            ModelService.updateOrCreate('Geojson', geoJsonResponse, {mapkey:mapkey}, function (err, result) {
+            ModelService.updateOrCreate('Geojson', geoJsonResponse, {mapkey:mapkey.mapkey}, function (err, result) {
               sails.log.debug(err, result);
               if (err) return callback(err);
               callback(null, result);
@@ -304,23 +261,11 @@ var importMapkey = function (mapkey, callback) {
   });
 }
 
-var getMapkeys = function () {
-  return {
-    level1: level1Mapkeys,
-    level2: level2Mapkeys,
-    level3: level3Mapkeys,
-  }
-}
-
 module.exports = {
   destroyAll: destroyAll,
   importMapkey: importMapkey,
   importLevel0: importLevel0,
   importLevel1: importLevel1,
   importLevel2: importLevel2,
-  importLevel3: importLevel3,
-  level1Mapkeys: level1Mapkeys,
-  level2Mapkeys: level2Mapkeys,
-  level3Mapkeys: level3Mapkeys,
-  getMapkeys: getMapkeys
+  importLevel3: importLevel3
 }

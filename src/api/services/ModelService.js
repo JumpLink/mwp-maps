@@ -52,7 +52,24 @@ var updateOrCreate = function (modelName, data, id, callback) {
   });
 }
 
+var replace = function (modelName, data, callback) {
+
+  if (!data) {
+    return callback('No data provided.');
+  }
+
+  global[modelName].destroy({}).exec(function destroyed (err, destroyResult) {
+    if (err) return callback(err);
+    global[modelName].create(data).exec(function created (err, data) {
+      if (err) return callback(err);
+      global[modelName].publishCreate(data);
+      return callback(null, data);
+    });
+  });
+}
+
 module.exports = {
   updateOrCreate: updateOrCreate,
-  updateOrCreateResponse: updateOrCreateResponse
+  updateOrCreateResponse: updateOrCreateResponse,
+  replace: replace
 }

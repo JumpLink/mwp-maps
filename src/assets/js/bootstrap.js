@@ -158,7 +158,7 @@ jumplink.cms.config( function($stateProvider, $urlRouterProvider, $locationProvi
     url: '/database/mapkey'
     , resolve:{
       mapkeys: function($sailsSocket, $log) {
-        return $sailsSocket.get('/geojson/mapkeys', {}).then (function (data) {
+        return $sailsSocket.get('/mapkey?limit=0', {}).then (function (data) {
           $log.debug(data);
           return data.data;
         });

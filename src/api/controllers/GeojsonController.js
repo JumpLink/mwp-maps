@@ -3,7 +3,7 @@ var fs = require('fs-extra'); // Node.js: extra methods for the fs object: https
 var http = require('http');
 
 module.exports = {
-  // example: http://localhost:1338/geojson/import?mapkey=custom/world-highres
+  // example: http://localhost:1338/geojson/importMapkey?mapkey=custom/world-highres
   importMapkey: function (req, res, next) {
 
     // available mapkeys: http://code.highcharts.com/mapdata/
@@ -62,6 +62,7 @@ module.exports = {
             if (error) return res.serverError(error);
             GeojsonService.importLevel3(function destroyed (error, data) {
               if (error) return res.serverError(error);
+              sails.log.info("reimportall finish!");
               res.ok();
             });
           });

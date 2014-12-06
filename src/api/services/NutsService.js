@@ -4,24 +4,62 @@ var xml2js = require('xml2js');
 var xmlParser = new xml2js.Parser();
 var csv = require('csv');
 
+/**
+ * Ermittelt den hasc code zum jeweiligen nutscode auf level 0 Ebene
+ * countries source: Pascal Garber
+ * typ: see importerHascDeLevel3
+ */
+var importerHascLevel0 = function(callback) {
+  var countries = [
+    {
+      'nutscode': 'DE',
+      'hasc': 'DE',
+      'country': 'Deutschland',
+      'adminlevel': 1,
+      'nutslevel': 1,
+      'typ': 'c',               // typ c: Country; see below
+    }
+  ];
+
+  var iterator = function (country, callback) {
+    // sails.log.debug("importerHascLevel0", "iterator", country);
+    Nuts.find({nutscode:country.nutscode}).exec(function found(err, found) {
+      if (err) return callback(err);
+      if (found instanceof Array) found = found[0];
+      found.hasc = country.hasc;
+      found.adminlevel = country.adminlevel; // nutslevel  entspricht admin level 0 in deutschland
+      found.typ = country.typ;
+      sails.log.info(found);
+      Nuts.update(found.id, found).exec(function found(err, found) {
+        if (err) return callback(err);
+        callback(null, found);
+      });
+    });
+  }
+
+  async.mapSeries(countries, iterator, callback);
+}
+
+/*
+ * Ermittelt den hasc code zum jeweiligen nutscode auf level 1 Ebene
+ * Bundesländer Source: Pascal Garber
+ * Entsprecht NUTS-1 Ebene für Deutschland / Nuts Level 1
+ * Beispiel: http://localhost:1338/geojson?mapkey=countries/de/de-all:
+ * agssubcode: Bundeslandkennziffer (für nuts level 1 die ersten beiden 2 Ziffern vom AGS) gemäß AGS see http://giswiki.org/wiki/Amtlicher_Gemeindeschl%C3%BCssel#Bundesl.C3.A4nder
+ * hc-key: Wie ihn Highmaps verwendet Gemäß ISO_3166-2:DE aber lowercase see http://de.wikipedia.org/wiki/ISO_3166-2:DE
+ * nutscode: Gemäß NUTS:DE siehe http://de.wikipedia.org/wiki/NUTS:DE
+ * nutslevel: Nuts-Code Level
+ * adminlevel: Admin level gemäß hasc; ( alternativer admin level: http://wiki.openstreetmap.org/wiki/Key:admin_level#admin_level)
+ * hasc: Hierarchical administrative subdivision codes see http://en.wikipedia.org/wiki/Hierarchical_administrative_subdivision_codes
+ * typ: see importerHascDeLevel3
+ *
+ * Amtlicher Gemeindeschlüssel
+ * Info:
+ *  https://www.destatis.de/DE/ZahlenFakten/LaenderRegionen/Regionales/Gemeindeverzeichnis_ol.html
+ *  https://www.destatis.de/DE/ZahlenFakten/LaenderRegionen/Regionales/Gemeindeverzeichnis/Administrativ/Aktuell/Zensus_Gemeinden.html
+ *  http://de.wikipedia.org/wiki/Amtlicher_Gemeindeschl%C3%BCssel
+ */
 var importerHascDeLevel1 = function(callback) {
-  /*
-   * Source: Pascal Garber
-   * Entsprecht NUTS-1 Ebene für Deutschland / Nuts Level 1
-   * Beispiel: http://localhost:1338/geojson?mapkey=countries/de/de-all:
-   * agssubcode: Bundeslandkennziffer (für nuts level 1 die ersten beiden 2 Ziffern vom AGS) gemäß AGS see http://giswiki.org/wiki/Amtlicher_Gemeindeschl%C3%BCssel#Bundesl.C3.A4nder
-   * hc-key: Wie ihn Highmaps verwendet Gemäß ISO_3166-2:DE aber lowercase see http://de.wikipedia.org/wiki/ISO_3166-2:DE
-   * nutscode: Gemäß NUTS:DE siehe http://de.wikipedia.org/wiki/NUTS:DE
-   * nutslevel: Nuts-Code Level
-   * adminlevel: Admin level gemäß hasc; ( alternativer admin level: http://wiki.openstreetmap.org/wiki/Key:admin_level#admin_level)
-   * hasc: Hierarchical administrative subdivision codes see http://en.wikipedia.org/wiki/Hierarchical_administrative_subdivision_codes
-   *
-   * Amtlicher Gemeindeschlüssel
-   * Info:
-   *  https://www.destatis.de/DE/ZahlenFakten/LaenderRegionen/Regionales/Gemeindeverzeichnis_ol.html
-   *  https://www.destatis.de/DE/ZahlenFakten/LaenderRegionen/Regionales/Gemeindeverzeichnis/Administrativ/Aktuell/Zensus_Gemeinden.html
-   *  http://de.wikipedia.org/wiki/Amtlicher_Gemeindeschl%C3%BCssel
-   */
   var bundeslaender = [
     {
       'agssubcode': '01',
@@ -182,25 +220,28 @@ var importerHascDeLevel3 = function(callback) {
    * source: www.statoids.com/yde.html
    *
    * typ: See list of subdivision types below.
-   * b  Federal state                               Bundesland
-   * d  District                                    Kreis
-   * g  Group of regions                            Regionalverband
-   * l  Rural district                              Landkreis
-   * s  Town/city that is not part of a district    Kreisfreie Stadt
-   * u  Urban district                              Stadtkreis
+   * #  Name                                        Translation         Source
+   * --------------------------------------------------------------------------
+   * b  Federal state                               Bundesland          statoids
+   * d  District                                    Kreis               statoids
+   * g  Group of regions                            Regionalverband     statoids
+   * l  Rural district                              Landkreis           statoids
+   * s  Town/city that is not part of a district    Kreisfreie Stadt    statoids
+   * u  Urban district                              Stadtkreis          statoids
+   * c  Country                                     Land                Ṕascal Garber
    *
    * hasc: Hierarchical administrative subdivision codes.
    * nutscode: Codes from Nomenclature for Statistical Territorial Units (European standard).
    * population: 2011-05-09 census
    * area: km.² Source: German Wikipedia.
-   * rb: Arbitrary code for the Regierungsbezirk as of ~1999 (see list below).
+   * rb: Arbitrary code for the Regierungsbe  zirk as of ~1999 (see list below).
    */
   var iterator = function (item, callback) {
-    sails.log.debug(item);
+    // sails.log.debug(item);
     Nuts.find({nutscode:item.nutscode}).exec(function found(err, found) {
       if (err) return callback(err);
       if (found instanceof Array) found = found[0];
-      sails.log.debug(found);
+      // sails.log.debug(found);
       found.typ = item.typ;
       found.hasc = item.hasc;
       found.rb = item.rb;
@@ -253,10 +294,13 @@ var validateNuts = function (item) {
   return item;
 }
 
-// import level 0 - 3
+/**
+ * Current Importer
+ * import level 0 - 3
+ * source: https://github.com/GeoKnow/GeoStats/tree/master/data/nuts
+ * Nuts Version 2010
+ */
 var importer2010 = function(callback) {
-  // source: https://github.com/GeoKnow/GeoStats/tree/master/data/nuts
-
   var iterator = function (item, callback) {
     delete item['countries sorting order'];
     delete item.order;
@@ -276,11 +320,13 @@ var importer2010 = function(callback) {
 }
 
 
-// import level 0 - 3
+/**
+ * Old Importer
+ * import level 0 - 3
+ * import from http://ec.europa.eu/
+ * download xml from: 'http://ec.europa.eu/eurostat/ramon/rdfdata/nuts2008/';
+ */
 var importer3 = function(callback) {
-  // import from http://ec.europa.eu/
-  // download xml from: 'http://ec.europa.eu/eurostat/ramon/rdfdata/nuts2008/';
-
   var transfromXmlResultNutsItemTterator = function (item, callback) {
     var result = {};
 
@@ -308,9 +354,13 @@ var importer3 = function(callback) {
   });
 }
 
-// import level 0 - 2
+/**
+ * Old Importer
+ * import level 0 - 2
+ * import from http://www.eea.europa.eu/data-and-maps/daviz/sds/nuts-regions-level-0-to-2/@@view
+ */
 var importer2 = function(callback) {
-  // import from http://www.eea.europa.eu/data-and-maps/daviz/sds/nuts-regions-level-0-to-2/@@view
+  //
 
   var url = 'http://www.eea.europa.eu/data-and-maps/daviz/sds/nuts-regions-level-0-to-2/daviz.json';
 
@@ -368,6 +418,7 @@ module.exports = {
   importer3: importer3,
   importer2: importer2,
   importer2010: importer2010,
+  importerHascLevel0: importerHascLevel0,
   importerHascDeLevel3: importerHascDeLevel3,
   importerHascDeLevel1: importerHascDeLevel1,
   insertChilds: insertChilds,
