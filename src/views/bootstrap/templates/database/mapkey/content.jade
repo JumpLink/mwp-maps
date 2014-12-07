@@ -8,11 +8,13 @@
         thead
           tr
             th mapkey
+            th label
             th adminlevel
             th nutslevel
         tbody
           tr(ng-repeat="mapkey in mapkeys")
             td
               a(ng-href="/#/database/geojson-mapkey/{{mapkey.mapkey}}") {{mapkey.mapkey}}
+            td {{mapkey.label}}
             td {{mapkey.adminlevel}}
             td {{mapkey.nutslevel}}

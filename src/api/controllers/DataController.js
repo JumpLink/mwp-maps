@@ -6,6 +6,9 @@ var extend = require('node.extend');
 
 module.exports = {
 
+  /*
+   * Remove all data from data database
+   */
   destroyAll: function (req, res, next) {
     sails.log.info("destroy all data..");
     Data.destroy({}).exec(function destroyed (error, data) {
@@ -14,6 +17,9 @@ module.exports = {
     });
   }
 
+  /*
+   * Update "data" with "id" on data database
+   */
   , update: function (req, res, next) {
     var id = req.param('id');
     var data = req.params.all();
@@ -30,6 +36,10 @@ module.exports = {
     });
   }
 
+  /*
+   * Function to upload a csv with "export_nuts3" "import_nuts3" "year" and "value".
+   * After the upload the csv will be parsed, validated, transformed and saved to database.
+   */
   , upload: function (req, res) {
     sails.log.debug("data/upload",req._fileparser.form);
 
@@ -54,10 +64,18 @@ module.exports = {
         if (!data.value) callback("value not set");
 
         data.nutscode = data.export_nuts3;
+        data.level = 3; // imported data is always level 3
 
-        if(!data.exports) data.exports = {};
-        if(!data.exports[data.import_nuts3]) data.exports[data.import_nuts3] = {};
-        if(!data.exports[data.import_nuts3][data.year]) data.exports[data.import_nuts3][data.year] = Number(data.value.replace(/ /g, '').replace(/,/g , '.'));
+        data.exports = [];
+
+        data.exports = [{
+          nutscode: data.import_nuts3,
+        }];
+
+        data.exports[0].timeline = [{
+          year: data.year,
+          value: Number(data.value.replace(/ /g, '').replace(/,/g , '.'))
+        }];
 
         delete data.export_nuts3;
         delete data.import_nuts3;
@@ -92,8 +110,17 @@ module.exports = {
             // found
             } else {
 
+              found = DataService.mergeData(found, data, 'exports');
               // extend found result with new data
-              extend(true, found, data);
+              // var index = DataService.indexOfProperty(found, 'nutscode', data.exports[0].nutscode)
+
+              // if(index >= 0) {
+              //   // nutscode already in this array, so concat timeline
+              //   found.exports[index].timeline = found.exports[index].timeline.concat(data.exports[0].timeline);
+              // } else {
+              //   found.exports = found.exports.concat(data.exports);
+              // }
+
 
               sails.log.debug("Found!", found, data);
 
@@ -102,7 +129,7 @@ module.exports = {
                 if (data instanceof Array) data = data[0];
                 // sails.log.debug("update", err, data);
 
-                Data.publishUpdate(data.id, data);
+                Data.publishUpdate(found.id, found);
                 // sails.log.debug("publishUpdate", data.id, data);
 
                 return callback(null, data);
@@ -140,5 +167,16 @@ module.exports = {
         });
       });
     });
+  },
+
+  /*
+   * Generates the sum from nuts3 for nuts2, nuts1 and nuts0
+   */
+  generateSum: function (req, res, next) {
+    DataService.generateSum(function (err, result) {
+      if (err) return res.error(err);
+      else return res.json(result);
+    });
   }
+
 }

@@ -7,7 +7,8 @@
 
 var level0Mapkeys = [
   {
-    mapkey: 'custom/world-highres', // World
+    mapkey: 'custom/world-highres',
+    label: 'World',
     adminlevel: 0,
     nutslevel: 0,
   }
@@ -16,61 +17,73 @@ var level0Mapkeys = [
 var level1Mapkeys = [
   {
     mapkey: 'countries/af/af-all', // Afghanistan
+    label: 'Afghanistan',
     adminlevel: 1,
     nutslevel: 1,
   },
   {
     mapkey: 'countries/al/al-all', // Albania
+    label: 'Albania',
     adminlevel: 1,
     nutslevel: 1,
   },
   {
     mapkey: 'countries/dz/dz-all', // Algeria
+    label: 'Algeria',
     adminlevel: 1,
     nutslevel: 1,
   },
   {
     mapkey: 'countries/as/as-all', // American Samoa
+    label: ' American Samoa',
     adminlevel: 1,
     nutslevel: 1,
   },
   {
     mapkey: 'countries/ad/ad-all', // Andorra
+    label: 'Andorra',
     adminlevel: 1,
     nutslevel: 1,
   },
   {
     mapkey: 'countries/ao/ao-all', // Angola
+    label: 'Angola',
     adminlevel: 1,
     nutslevel: 1,
   },
   {
     mapkey: 'countries/ag/ag-all', // Antigua and Barbuda
+    label: 'Antigua and Barbuda',
     adminlevel: 1,
     nutslevel: 1,
   },
   {
     mapkey: 'countries/ar/ar-all', // Argentina
+    label: 'Argentina',
     adminlevel: 1,
     nutslevel: 1,
   },
   {
     mapkey: 'countries/am/am-all', // Armenia
+    label: 'Armenia',
     adminlevel: 1,
     nutslevel: 1,
   },
   {
     mapkey: 'countries/au/au-all', // Australia
+    label: 'Australia',
     adminlevel: 1,
     nutslevel: 1,
   },
   {
     mapkey: 'countries/at/at-all', // Austria
+    label: 'Austria',
     adminlevel: 1,
     nutslevel: 1,
   },
   {
     mapkey: 'countries/az/az-all', // Azerbaijan
+    label: 'Azerbaijan',
     adminlevel: 1,
     nutslevel: 1,
   },
@@ -79,6 +92,7 @@ var level1Mapkeys = [
   // Deutschland mit allen Bundesländern
   {
     mapkey: 'countries/de/de-all', // Germany
+    label: 'Germany',
     adminlevel: 1,
     nutslevel: 1,
     nutscode: 'DE', // primary nutscode for this nutslevel
@@ -93,66 +107,82 @@ var level1Mapkeys = [
 var level2Mapkeys = [
   {
     mapkey: 'countries/de/de-bw-all',
+    label: 'Baden-Württemberg',
     adminlevel: 2,
   },
   {
     mapkey: 'countries/de/de-by-all',
+    label: 'Bayern',
     adminlevel: 2,
   },
   {
     mapkey: 'countries/de/de-be-all',
+    label: 'Berlin',
     adminlevel: 2,
   },
   {
     mapkey: 'countries/de/de-bb-all',
+    label: 'Brandenburg',
     adminlevel: 2,
   },
   {
     mapkey: 'countries/de/de-hb-all',
+    label: 'Bremen',
     adminlevel: 2,
   },
   {
     mapkey: 'countries/de/de-hh-all',
+    label: 'Hamburg',
     adminlevel: 2,
   },
   {
     mapkey: 'countries/de/de-he-all',
+    label: 'Hessen',
     adminlevel: 2,
   },
   {
     mapkey: 'countries/de/de-mv-all',
+    label: 'Mecklenburg-Vorpommern',
     adminlevel: 2,
   },
   {
     mapkey: 'countries/de/de-ni-all',
+    label: 'Niedersachsen',
     adminlevel: 2,
   },
   {
     mapkey: 'countries/de/de-nw-all',
+    label: 'Nordrhein-Westfalen',
     adminlevel: 2,
   },
   {
     mapkey: 'countries/de/de-rp-all',
+    label: 'Rheinland-Pfalz',
     adminlevel: 2,
   },
   {
     mapkey: 'countries/de/de-sl-all',
+    label: 'Saarland',
     adminlevel: 2,
   },
   {
     mapkey: 'countries/de/de-sn-all',
+    label: 'Sachsen',
     adminlevel: 2,
   },
   {
     mapkey: 'countries/de/de-st-all',
+    label: 'Sachsen-Anhalt',
     adminlevel: 2,
   },
   {
     mapkey: 'countries/de/de-sh-all',
+    label: 'Schleswig-Holstein',
     adminlevel: 2,
   },
   {
     mapkey: 'countries/de/de-th-all',
+    label: 'Thüringen',
     adminlevel: 2,
   },
 ];
@@ -164,6 +194,7 @@ var level2Mapkeys = [
  */
 var TODO = {
   mapkey: 'countries/de/de-all-all', // Germany
+  label: 'Germany',
   adminlevel: 2,
   nutscode0: 'DE',
 };
@@ -176,96 +207,112 @@ var nuts2Mapkeys = []; // TODO
 var level3Mapkeys = [
   {
     mapkey: 'countries/de/de-bw-all-all',
+    label: 'Baden-Württemberg',
     adminlevel: 3,
     nutslevel: 3,
     nutscode0: 'DE',
   },
   {
     mapkey: 'countries/de/de-by-all-all',
+    label: 'Bayern',
     adminlevel: 3,
     nutslevel: 3,
     nutscode0: 'DE',
   },
   {
     mapkey: 'countries/de/de-be-all-all',
+    label: 'Berlin',
     adminlevel: 3,
     nutslevel: 3,
     nutscode0: 'DE',
   },
   {
     mapkey: 'countries/de/de-bb-all-all',
+    label: 'Brandenburg',
     adminlevel: 3,
     nutslevel: 3,
     nutscode0: 'DE',
   },
   {
     mapkey: 'countries/de/de-hb-all-all',
+    label: 'Bremen',
     adminlevel: 3,
     nutslevel: 3,
     nutscode0: 'DE',
   },
   {
     mapkey: 'countries/de/de-hh-all-all',
+    label: 'Hamburg',
     adminlevel: 3,
     nutslevel: 3,
     nutscode0: 'DE',
   },
   {
     mapkey: 'countries/de/de-he-all-all',
+    label: 'Hessen',
     adminlevel: 3,
     nutslevel: 3,
     nutscode0: 'DE',
   },
   {
     mapkey: 'countries/de/de-mv-all-all',
+    label: 'Mecklenburg-Vorpommern',
     adminlevel: 3,
     nutslevel: 3,
     nutscode0: 'DE',
   },
   {
     mapkey: 'countries/de/de-ni-all-all',
+    label: 'Niedersachsen',
     adminlevel: 3,
     nutslevel: 3,
     nutscode0: 'DE',
   },
   {
     mapkey: 'countries/de/de-nw-all-all',
+    label: 'Nordrhein-Westfalen',
     adminlevel: 3,
     nutslevel: 3,
     nutscode0: 'DE',
   },
   {
     mapkey: 'countries/de/de-rp-all-all',
+    label: 'Rheinland-Pfalz',
     adminlevel: 3,
     nutslevel: 3,
     nutscode0: 'DE',
   },
   {
     mapkey: 'countries/de/de-sl-all-all',
+    label: 'Saarland',
     adminlevel: 3,
     nutslevel: 3,
     nutscode0: 'DE',
   },
   {
     mapkey: 'countries/de/de-sn-all-all',
+    label: 'Sachsen',
     adminlevel: 3,
     nutslevel: 3,
     nutscode0: 'DE',
   },
   {
     mapkey: 'countries/de/de-st-all-all',
+    label: 'Sachsen-Anhalt',
     adminlevel: 3,
     nutslevel: 3,
     nutscode0: 'DE',
   },
   {
     mapkey: 'countries/de/de-sh-all-all',
+    label: 'Schleswig-Holstein',
     adminlevel: 3,
     nutslevel: 3,
     nutscode0: 'DE',
   },
   {
     mapkey: 'countries/de/de-th-all-all',
+    label: 'Thüringen',
     adminlevel: 3,
     nutslevel: 3,
     nutscode0: 'DE',
