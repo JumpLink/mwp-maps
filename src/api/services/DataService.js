@@ -1,30 +1,50 @@
-var indexOfProperty = function (array, propertyname, value, exportsOrImports) {
+/*
+ * Get index of "array" of objects with property "propertyname" that is equal to "value"
+ * return: -1 if no index was found, otherwise the index
+ */
+var indexOfProperty = function (array, propertyname, value) {
   var found = false;
   var index = -1;
-  if(!array[exportsOrImports]) return index;
-  for (var i = 0; i < array[exportsOrImports].length && index == -1; i++) {
-    if(array[exportsOrImports][i][propertyname] === value) {
+  if(!array) return index;
+  for (var i = 0; i < array.length && index == -1; i++) {
+    if(array[i][propertyname] === value) {
       index = i;
     }
   };
   return index;
 }
 
+/*
+ * merged tow timelines
+ * return: union of the years of a and b, a year occurs only once
+ */
+var mergeTimelines = function (a, b) {
+  for (var i = 0; i < b.length; i++) {
+    var index = indexOfProperty(a, 'year', b[i].year);
+    // if index === -1: year from b is not in a, so we can add this year to a
+    if(index === -1) {
+      a.push(b[i]);
+    } else {
+      // Do nothing or replace year value?
+    }
+  };
+  return a;
+}
+
+/*
+ *  merge two objects with the properties "nutscode", "level", "timeline" and "exports" or "imports"
+ */
 var mergeData = function (a, b, exportsOrImports) {
   if(!a[exportsOrImports]) a[exportsOrImports] = [];
   if(!b[exportsOrImports]) b[exportsOrImports] = [];
-
   if(b[exportsOrImports].length !== 1) sails.log.error("mergeData: b["+exportsOrImports+"] must be an array with length 1");
-  var index = indexOfProperty(a, 'nutscode', b[exportsOrImports][0].nutscode, exportsOrImports);
-
-  // sails.log.debug("mergeData", "a", a, "b", b, "exportsOrImports", '"'+exportsOrImports+'"', "index", index);
-
+  var index = indexOfProperty(a[exportsOrImports], 'nutscode', b[exportsOrImports][0].nutscode);
   if(index !== -1) {
     // sails.log.debug("!a[exportsOrImports][index]", a[exportsOrImports][index]);
     if(!a[exportsOrImports][index].timeline) a[exportsOrImports][index].timeline = [];
     if(!b[exportsOrImports][0].timeline) b[exportsOrImports][0].timeline = [];
-    // nutscode already in this array, so concat timeline
-    a[exportsOrImports][index].timeline = a[exportsOrImports][index].timeline.concat(b[exportsOrImports][0].timeline);
+    // nutscode already in this array, so merge timeline
+    a[exportsOrImports][index].timeline = mergeTimelines(a[exportsOrImports][index].timeline, b[exportsOrImports][0].timeline)
   } else {
     a[exportsOrImports] = a[exportsOrImports].concat(b[exportsOrImports]);
   }

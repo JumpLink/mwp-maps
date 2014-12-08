@@ -109,21 +109,8 @@ module.exports = {
               });
             // found
             } else {
-
               found = DataService.mergeData(found, data, 'exports');
-              // extend found result with new data
-              // var index = DataService.indexOfProperty(found, 'nutscode', data.exports[0].nutscode)
-
-              // if(index >= 0) {
-              //   // nutscode already in this array, so concat timeline
-              //   found.exports[index].timeline = found.exports[index].timeline.concat(data.exports[0].timeline);
-              // } else {
-              //   found.exports = found.exports.concat(data.exports);
-              // }
-
-
               sails.log.debug("Found!", found, data);
-
               Data.update(found.id, found).exec(function updated (err, data) {
                 if (err) return callback(err);
                 if (data instanceof Array) data = data[0];
