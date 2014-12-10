@@ -16,24 +16,23 @@ var updateOrCreateResponse = function (modelName, findBy, req, res, next) {
 
 }
 
-var updateOrCreate = function (modelName, data, id, callback) {
+var updateOrCreate = function (modelName, data, query, callback) {
   // sails.log.debug("updateOrCreate", modelName, data, id);
   // sails.log.debug("global[modelName]", global[modelName]);
 
-  if (typeof id == 'undefined') {
-    return callback('No id provided.');
+  if (typeof query == 'undefined') {
+    return callback('No query provided.');
   }
   if (!data) {
     return callback('No data provided.');
   }
 
   // Otherwise, find and destroy the global[modelName] in question
-  global[modelName].find(id).exec(function found(err, found) {
+  global[modelName].find(query).exec(function found(err, found) {
     if (err) return callback(err);
     if (found instanceof Array) found = found[0];
-    // sails.log.debug("found", err, found);
     // not found
-    if (!found || found.length <= 0) {
+    if (!found) {
       global[modelName].create(data).exec(function created (err, data) {
         if (err) return callback(err);
         // sails.log.debug("created", err, data);
@@ -41,6 +40,7 @@ var updateOrCreate = function (modelName, data, id, callback) {
         return callback(null, data);
       });
     } else {
+      // sails.log.debug("found", found);
       global[modelName].update(found.id, data).exec(function updated (err, data) {
         if (err) return callback(err);
         if (data instanceof Array) data = data[0];
@@ -68,8 +68,40 @@ var replace = function (modelName, data, callback) {
   });
 }
 
+var updateEach = function (modelName, datas, callback) {
+  if (!datas) {
+    return callback('No data provided.');
+  }
+  var iterator = function (data, callback) {
+    if (!data.id) {
+      return callback('No data provided.');
+    }
+    global[modelName].update(data.id, data).exec(function updated (err, data) {
+      if (err) return callback(err);
+      if (data instanceof Array) data = data[0];
+      global[modelName].publishUpdate(data.id, data);
+      return callback(null, data);
+    });
+  }
+  async.map(datas, iterator, callback);
+}
+
+var updateOrCreateEach = function (modelName, datas, propertyName, callback) {
+  if (!datas) {
+    return callback('No data provided.');
+  }
+  var iterator = function (data, callback) {
+    var query = {};
+    query[propertyName] = data[propertyName];
+    updateOrCreate(modelName, data, query, callback)
+  }
+  async.map(datas, iterator, callback);
+}
+
 module.exports = {
   updateOrCreate: updateOrCreate,
   updateOrCreateResponse: updateOrCreateResponse,
-  replace: replace
+  replace: replace,
+  updateEach: updateEach,
+  updateOrCreateEach: updateOrCreateEach
 }

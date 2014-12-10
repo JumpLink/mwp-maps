@@ -29,9 +29,17 @@ module.exports = {
     });
   }
 
+  , findByLevel: function (req, res) {
+    var level = Number(req.param('level'));
+    Data.find({level:level}).exec(function found(err, found) {
+      if (err) return callback(err);
+      else return res.json(found);
+    });
+  }
+
   , findAndSaveImports: function (req, res) {
     DataService.findAndSaveImports( function(error, data) {
-      if (error) return res.error(error);
+      if (error) return res.serverError(error);
       else return res.json(data);
     });
   }
@@ -141,27 +149,32 @@ module.exports = {
         });
       }
 
-      async.map(files, convertFileIterator, function(err, files) {
-        if (err) return res.error(err);
-        DataService.findAndSaveImports( function(error, data) {
-          if (err) return res.error(err);
-          var result = {
-            message: files.length + ' file(s) uploaded successfully!',
-            findAndSaveImports: data
-          };
-          // sails.log.debug(result);
-          return res.json(result);
+      Data.destroy({}).exec(function destroyed (error, data) {
+        if (error) return res.serverError(error);
+        async.map(files, convertFileIterator, function(err, files) {
+          if (err) return res.serverError(err);
+          // DataService.findAndSaveImports( function(error, data) {
+          //   if (err) return res.serverError(err);
+          //   DataService.generateLevel2( function (err, data) {
+          //     if (err) return res.serverError(err);
+              var result = {
+                message: files.length + ' file(s) uploaded successfully!',
+              };
+              // sails.log.debug(result);
+              return res.json(result);
+          //   });
+          // });
         });
       });
     });
   },
 
   /*
-   * Generates the sum from nuts3 for nuts2, nuts1 and nuts0
+   * Generates the sum from nuts3 for nuts2
    */
-  generateSum: function (req, res, next) {
-    DataService.generateSum(function (err, result) {
-      if (err) return res.error(err);
+  generateLevel2: function (req, res, next) {
+    DataService.generateLevel2(function (err, result) {
+      if (err) return res.serverError(err);
       else return res.json(result);
     });
   }
