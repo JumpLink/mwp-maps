@@ -117,8 +117,10 @@ module.exports = {
               });
             // found
             } else {
-              found = DataService.mergeData(found, data, 'exports');
+              // found = DataService.mergeDataDeprecated(found, data, 'exports');
               sails.log.debug("Found!", found, data);
+              found = DataService.unionData(found, data);
+              sails.log.debug("Found merged", found);
               Data.update(found.id, found).exec(function updated (err, data) {
                 if (err) return callback(err);
                 if (data instanceof Array) data = data[0];
@@ -153,17 +155,17 @@ module.exports = {
         if (error) return res.serverError(error);
         async.map(files, convertFileIterator, function(err, files) {
           if (err) return res.serverError(err);
-          // DataService.findAndSaveImports( function(error, data) {
-          //   if (err) return res.serverError(err);
-          //   DataService.generateLevel2( function (err, data) {
-          //     if (err) return res.serverError(err);
+          DataService.findAndSaveImports( function(error, data) {
+            if (err) return res.serverError(err);
+            DataService.generateLevel2( function (err, data) {
+              if (err) return res.serverError(err);
               var result = {
                 message: files.length + ' file(s) uploaded successfully!',
               };
               // sails.log.debug(result);
               return res.json(result);
-          //   });
-          // });
+            });
+          });
         });
       });
     });

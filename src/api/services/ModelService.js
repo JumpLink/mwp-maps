@@ -87,15 +87,21 @@ var updateEach = function (modelName, datas, callback) {
 }
 
 var updateOrCreateEach = function (modelName, datas, propertyName, callback) {
+  if (!modelName) {
+    return callback('No model name provided.');
+  }
   if (!datas) {
     return callback('No data provided.');
+  }
+  if (!propertyName) {
+    return callback('No property name provided.');
   }
   var iterator = function (data, callback) {
     var query = {};
     query[propertyName] = data[propertyName];
     updateOrCreate(modelName, data, query, callback)
   }
-  async.map(datas, iterator, callback);
+  async.mapSeries(datas, iterator, callback);
 }
 
 module.exports = {
