@@ -66,36 +66,67 @@ module.exports = {
 
       var validateAndTransform = function (data, callback) {
 
-        if (!data.export_nuts3) callback("export_nuts3 not set");
-        if (!data.import_nuts3) callback("import_nuts3 not set");
-        if (!data.year) callback("year not set");
-        if (!data.value) callback("value not set");
+        if (typeof data.export_nuts3 !==  'undefined' && typeof data.export_nuts2 !== 'undefined' && typeof data.export_nuts1 !== 'undefined' && typeof data.export_nuts0 !== 'undefined' ) return callback("export_nutsX not set", data);
+        if (typeof data.import_nuts3 !==  'undefined' && typeof data.import_nuts2 !== 'undefined' && typeof data.import_nuts1 !== 'undefined' && typeof data.import_nuts0 !== 'undefined' ) return callback("import_nutsX not set", data);
+        if (!data.year) return callback("year not set");
+        if (!data.value) return callback("value not set");
 
-        data.nutscode = data.export_nuts3;
-        data.level = 3; // imported data is always level 3
+        if(typeof data.export_nuts3 !== 'undefined'  && typeof data.import_nuts3 !== 'undefined') {
+          data.level = 3;
+          data.nutscode = data.export_nuts3;
+          delete data.export_nuts3;
 
-        data.exports = [];
+          data.exports = [{
+            nutscode: data.import_nuts3,
+          }];
+          delete data.import_nuts3;
+        } else if(typeof data.export_nuts2 !== 'undefined' && typeof data.import_nuts2 !== 'undefined') {
+          data.level = 2;
+          data.nutscode = data.export_nuts2;
+          delete data.export_nuts2;
 
-        data.exports = [{
-          nutscode: data.import_nuts3,
-        }];
+          data.exports = [{
+            nutscode: data.import_nuts2,
+          }];
+          delete data.import_nuts2;
+        } else if(typeof data.export_nuts1 !== 'undefined' && typeof data.import_nuts1 !== 'undefined') {
+          data.level = 1;
+          data.nutscode = data.export_nuts1;
+          delete data.export_nuts1;
+
+          data.exports = [{
+            nutscode: data.import_nuts1,
+          }];
+          delete data.import_nuts1;
+        } else if(typeof data.export_nuts0 !== 'undefined' && typeof data.import_nuts0 !== 'undefined') {
+          data.level = 0;
+          data.nutscode = data.export_nuts0;
+          delete data.export_nuts0;
+
+          data.exports = [{
+            nutscode: data.import_nuts0,
+          }];
+          delete data.import_nuts0;
+        } else {
+          return callback("export_nutsX and import_nutsX must be the same nutslevel")
+        }
 
         data.exports[0].timeline = [{
           year: data.year,
-          value: Number(data.value.replace(/ /g, '').replace(/,/g , '.'))
+          // transform german notation of number
+          value: Number(data.value.replace(/\./g , '').replace(/ /g, '').replace(/,/g , '.'))
         }];
-
-        delete data.export_nuts3;
-        delete data.import_nuts3;
         delete data.year;
         delete data.value;
+
+        sails.log.debug("validateAndTransform", data);
 
         callback(null, data);
       }
 
       var saveToDatabaseIterator = function (data, callback) {
 
-        validateAndTransform(data, function (error, data) {
+        validateAndTransform(data, function (err, data) {
           if (err) return callback(err);
           var query = {
             nutscode: data.nutscode
@@ -141,8 +172,8 @@ module.exports = {
         // sails.log.debug(file);
         fs.readFile(file.fd, 'utf8', function(err, data) {
           if (err) return res.serverError(err);
-          csv.parse(data, {'columns':true}, function(err, columns) {
-            // sails.log.debug(data);
+          csv.parse(data, {columns:true}, function(err, columns) {
+            sails.log.debug(columns);
             async.mapSeries(columns, saveToDatabaseIterator, function(err, result){
               // sails.log.debug("toDatabaseSaved")
               callback(err, result);
@@ -151,20 +182,31 @@ module.exports = {
         });
       }
 
-      Data.destroy({}).exec(function destroyed (error, data) {
-        if (error) return res.serverError(error);
+      Data.destroy({}).exec(function destroyed (err, data) {
+        if (err) return res.serverError(err);
+        sails.log.info("destroy all data finish");
         async.map(files, convertFileIterator, function(err, files) {
-          if (err) return res.serverError(err);
-          DataService.findAndSaveImports( function(error, data) {
-            if (err) return res.serverError(err);
-            DataService.generateLevel2( function (err, data) {
-              if (err) return res.serverError(err);
+          if (err) {
+            sails.log.error(err, files);
+            // process.exit(1);
+            return res.serverError(err);
+          }
+          sails.log.info("convert files finish");
+          DataService.findAndSaveImports( function(err, data) {
+            // if (err) return res.serverError(err);
+            sails.log.info("findAndSaveImports finish");
+            // DataService.generateLevel2( function (err, data) {
+              if (err) {
+                sails.log.error(err, data);
+                // process.exit(1);
+                return res.serverError(err);
+              }
               var result = {
                 message: files.length + ' file(s) uploaded successfully!',
               };
               // sails.log.debug(result);
               return res.json(result);
-            });
+            // });
           });
         });
       });

@@ -289,8 +289,8 @@ var findAndSaveImports = function (callback) {
         for (var k = 0; k < foundDatas[i].exports.length; k++) {
           // sails.log.debug("foundDatas["+i+"].exports["+k+"]", foundDatas[i].exports[k]);
           var newImport = {
-            nutscode: foundDatas[i].exports[k].nutscode,        // import source / export target
-            level: 3,
+            nutscode: foundDatas[i].exports[k].nutscode,           // import source / export target
+            level: foundDatas[i].level,
             imports: [{
               nutscode: foundDatas[i].nutscode,                    // import target / export source
               timeline: foundDatas[i].exports[k].timeline
