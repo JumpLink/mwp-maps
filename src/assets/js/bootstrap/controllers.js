@@ -171,7 +171,7 @@ jumplink.cms.controller('LayoutController', function($scope) {
 
 });
 
-jumplink.cms.controller('ToolbarController', function($scope, toolbarService, FileUploader) {
+jumplink.cms.controller('ToolbarController', function($scope, $modal, $sailsSocket, $log, $state, toolbarService, FileUploader) {
   $scope.currentView = toolbarService.currentView;
 
   toolbarService.registerObserverCallback(function(view) {
@@ -187,6 +187,62 @@ jumplink.cms.controller('ToolbarController', function($scope, toolbarService, Fi
       return '|csv|'.indexOf(type) !== -1;
     }
   });
+
+
+  // MAP CONFIG START
+
+  var mapkeys = {};
+
+  $scope.mapConfig = {
+    admintype: 'nuts',
+    level: 1,
+    mapkeys: mapkeys,
+    selectedMapkey: null
+  }
+
+  $sailsSocket.post('/mapkey/findByLevel', {nutslevel:0}).then (function (data) {
+    $scope.mapConfig.mapkeys.nutslevel0 = data.data;
+    $log.debug("mapkeys.nutslevel0", $scope.mapConfig.mapkeys.nutslevel0);
+
+    $sailsSocket.post('/mapkey/findByLevel', {nutslevel:1}).then (function (data) {
+      $scope.mapConfig.mapkeys.nutslevel1 = data.data;
+      $log.debug("mapkeys.nutslevel1", $scope.mapConfig.mapkeys.nutslevel1);
+
+      $sailsSocket.post('/mapkey/findByLevel', {nutslevel:2}).then (function (data) {
+        $scope.mapConfig.mapkeys.nutslevel2 = data.data;
+        $log.debug("mapkeys.nutslevel2", $scope.mapConfig.mapkeys.nutslevel2);
+
+        $sailsSocket.post('/mapkey/findByLevel', {nutslevel:3}).then (function (data) {
+          $scope.mapConfig.mapkeys.nutslevel3 = data.data;
+          $log.debug("mapkeys.nutslevel3", $scope.mapConfig.mapkeys.nutslevel3);
+        });
+      });
+    });
+  });
+
+  var mapConfigModal = $modal({scope: $scope, title: "Karteneinstellungen", config: $scope.mapConfig, show: false, template: 'bootstrap/map/configmodal'});
+
+ $scope.showMapConfigModal = function() {
+    //- Show when some event occurs (use $promise property to ensure the template has been loaded)
+    mapConfigModal.$promise.then(mapConfigModal.show);
+  }
+
+  $scope.goToMap = function (mapConfig) {
+    var mapkeyParts = mapConfig.selectedMapkey.split('/');
+    var params = {
+      level: mapConfig.level,
+      admintype: mapConfig.admintype,
+      mapkey1: mapkeyParts[0],
+      mapkey2: mapkeyParts[1],
+      mapkey3: mapkeyParts[2]
+    }
+
+    $log.debug("goToMap", mapConfig, params);
+
+    $state.go('bootstrap-layout.map', params);
+  }
+
+  // MAP CONFIG END
 
   $scope.databaseDropdown = [
     {
@@ -319,7 +375,7 @@ jumplink.cms.controller('HomeContentController', function($scope, $rootScope, $s
 });
 
 
-jumplink.cms.controller('MapController', function($rootScope, $scope, $sailsSocket, angularLoad, toolbarService, FileUploader, $log) {
+jumplink.cms.controller('MapController', function($rootScope, $scope, $sailsSocket, $stateParams, $log, angularLoad, toolbarService, FileUploader, data) {
   toolbarService.prepearView('map');
 
   $sailsSocket.subscribe('map', function(msg){
@@ -328,38 +384,58 @@ jumplink.cms.controller('MapController', function($rootScope, $scope, $sailsSock
     switch(msg.verb) {
       case 'updated':
         if($rootScope.authenticated)
-          $rootScope.pop('success', 'Eine Person wurde aktualisiert', msg.data.name);
+          $rootScope.pop('success', 'Karte wurde aktualisiert', msg.data.name);
       break;
       case 'created':
         if($rootScope.authenticated)
-          $rootScope.pop('success', 'Eine Person wurde erstellt', msg.data.name);
+          $rootScope.pop('success', 'Karte wurde erstellt', msg.data.name);
       break;
       case 'removedFrom':
         if($rootScope.authenticated)
-          $rootScope.pop('success', 'Eine Person wurde entfernt', msg.id);
+          $rootScope.pop('success', 'Karte wurde entfernt', msg.id);
       break;
       case 'destroyed':
         if($rootScope.authenticated)
-          $rootScope.pop('success', 'Eine Person wurde gelöscht', msg.id);
+          $rootScope.pop('success', 'Karte wurde gelöscht', msg.id);
       break;
       case 'addedTo':
         if($rootScope.authenticated)
-          $rootScope.pop('success', 'Eine Person wurde hinzugefügt', msg.data.name);
+          $rootScope.pop('success', 'Karte wurde hinzugefügt', msg.data.name);
       break;
     }
   });
 
+  var getGeojson = function(callback) {
+    $log.debug("bootstrap-layout.map resolve geojson");
+
+    var mapkey = $stateParams.mapkey1;
+    if($stateParams.mapkey2)
+        mapkey += "/"+$stateParams.mapkey2;
+    if($stateParams.mapkey3)
+        mapkey += "/"+$stateParams.mapkey3;
+
+    $log.debug(mapkey);
+
+    $sailsSocket.post('/geojson/findByMapkey', {mapkey:mapkey}).then (function (data) {
+      $log.debug('/geojson/findByMapkey', data);
+      callback(null, data.data[0]);
+    });
+  }
+
+  $log.debug($stateParams);
   // Prepare demo data
-  var data = [{
-    'hc-key': 'de',
-    value: 3
-  }, {
-    'hc-key': 'fr',
-    value: 5
-  }, {
-    'hc-key': 'nl',
-    value: 20
-  }];
+  // var data = [{
+  //   'hc-key': 'de',
+  //   value: 3
+  // }, {
+  //   'hc-key': 'fr',
+  //   value: 5
+  // }, {
+  //   'hc-key': 'nl',
+  //   value: 20
+  // }];
+
+  var data = data;
 
   var mapOptions = {
     mapNavigation: {
@@ -420,47 +496,42 @@ jumplink.cms.controller('MapController', function($rootScope, $scope, $sailsSock
   };
 
   var loadSeries = function (mapKey, nutLevel) {
-
-
     $scope.highchartsNgConfig.series = [];
 
-    angularLoad.loadScript('http://code.highcharts.com/mapdata/'+mapKey+'.js').then(function() {
-      $scope.highchartsNgConfig.series.push({
-        data: data,
-        mapData: Highcharts.maps[mapKey],
-        joinBy: 'hc-key',
-        allAreas: true,
-        name: 'Random data',
-        states: {
-          hover: {
-            color: '#BADA55'
-          }
-        },
-        dataLabels: {
-          enabled: true,
-          format: '{point.name}'
-        },
-        point: {
-          events: {
-            // On click, look for a detailed map
-            click: function () {
-              var key = this['hc-key'];
-              console.log("key", this, key);
-              var mapKey = 'countries/' + key.substr(0, 2) + '/' + key + '-all';
-              loadSeries(mapKey);
-            }
+    $scope.highchartsNgConfig.series.push({
+      data: data,
+      mapData: Highcharts.maps[mapKey],
+      joinBy: 'hc-key',
+      allAreas: true,
+      name: 'Random data',
+      states: {
+        hover: {
+          color: '#BADA55'
+        }
+      },
+      dataLabels: {
+        enabled: true,
+        format: '{point.name}'
+      },
+      point: {
+        events: {
+          // On click, look for a detailed map
+          click: function () {
+            var key = this['hc-key'];
+            console.log("key", this, key);
+            var mapKey = 'countries/' + key.substr(0, 2) + '/' + key + '-all';
+            loadSeries(mapKey);
           }
         }
-      });
-
-    }).catch(function() {
-      $log.error("can't load http://code.highcharts.com/mapdata/custom/north-america-no-central.js");
+      }
     });
   }
 
-  loadSeries('custom/europe');
 
-
+  getGeojson(function (error, geojson) {
+    Highcharts.maps[geojson.mapkey] = geojson;
+    loadSeries(geojson.mapkey);
+  });
 
 
   $scope.slider = {from:0, to:100, single: 50};

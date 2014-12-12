@@ -11,7 +11,9 @@
       li(data-match-route='/*home*')
         a(ui-sref='bootstrap-layout.home') Startseite
       li(data-match-route='/*map*')
-        a(ui-sref='bootstrap-layout.map') Karte
+        //- a(ui-sref='bootstrap-layout.map') Karte
+        a(ng-click="showMapConfigModal()") Karte
+        //- a(data-animation="am-fade-and-scale", data-placement="center", data-template="", bs-modal="mapModal") Karte
       li(data-match-route='/*database*', title="Datenbank", bs-dropdown="databaseDropdown", data-template="bootstrap/dropdown", data-placement="bottom-left", data-html="true")
         a(ui-sref='bootstrap-layout.database') Datenbank
       li(data-match-route='/*admin*', title="Einstellungen", bs-dropdown="adminSettingDropdown", data-template="bootstrap/dropdown", data-placement="bottom-left", data-html="true")

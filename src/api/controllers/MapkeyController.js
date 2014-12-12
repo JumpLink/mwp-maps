@@ -328,10 +328,19 @@ var setup = function (req, res, next) {
   });
 };
 
+var findByLevel = function (req, res, next) {
+  var nutslevel = Number(req.param('nutslevel')); // TODO adminlevel
+  Mapkey.find({nutslevel:nutslevel}).exec(function (error, data) {
+    if (error) return res.serverError(error);
+    res.json(data);
+  });
+};
+
 module.exports = {
   level1Mapkeys: level1Mapkeys,
   level2Mapkeys: level2Mapkeys,
   nuts2Mapkeys: nuts2Mapkeys,
   level3Mapkeys: level3Mapkeys,
-  setup: setup
+  setup: setup,
+  findByLevel: findByLevel
 }

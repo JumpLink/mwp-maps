@@ -1,0 +1,23 @@
+.modal(tabindex='-1', role='dialog')
+  .modal-dialog
+    .modal-content
+      .modal-header(ng-show='title')
+        button.close(type='button', ng-click='$hide()') ×
+        h4.modal-title(ng-bind='title')
+      .modal-body
+        .form-group
+          label(for="level") Nutslevel
+          input.form-control#level(type="number", name="level", placeholder="Level eingeben", ng-model="mapConfig.level")
+        .form-group
+          label(for="mapkey") Karte
+          br
+          button.btn.btn-primary#mapkey(ng-if="mapConfig.level == 0", ng-disabled="!mapConfig.mapkeys.nutslevel0.length", type="button", name="mapkey", data-placeholder="Wähle eine Nutslevel {{mapConfig.level}} Karte", ng-options="mapkey.mapkey as mapkey.label for mapkey in mapConfig.mapkeys.nutslevel0", data-template="bootstrap/select", bs-select, ng-model="mapConfig.selectedMapkey")
+            | mapkey
+          button.btn.btn-primary#mapkey(ng-if="mapConfig.level == 1", ng-disabled="!mapConfig.mapkeys.nutslevel1.length", type="button", name="mapkey", data-placeholder="Wähle eine Nutslevel {{mapConfig.level}} Karte" ng-options="mapkey.mapkey as mapkey.label for mapkey in mapConfig.mapkeys.nutslevel1", data-template="bootstrap/select", bs-select, ng-model="mapConfig.selectedMapkey")
+            | mapkey
+          button.btn.btn-primary#mapkey(ng-if="mapConfig.level == 2", ng-disabled="!mapConfig.mapkeys.nutslevel2.length", type="button", name="mapkey", data-placeholder="Wähle eine Nutslevel {{mapConfig.level}} Karte" ng-options="mapkey.mapkey as mapkey.label for mapkey in mapConfig.mapkeys.nutslevel2", data-template="bootstrap/select", bs-select, ng-model="mapConfig.selectedMapkey")
+            | mapkey
+          button.btn.btn-primary#mapkey(ng-if="mapConfig.level == 3", ng-disabled="!mapConfig.mapkeys.nutslevel3.length" type="button", name="mapkey", data-placeholder="Wähle eine Nutslevel {{mapConfig.level}} Karte" ng-options="mapkey.mapkey as mapkey.label for mapkey in mapConfig.mapkeys.nutslevel3", data-template="bootstrap/select", bs-select, ng-model="mapConfig.selectedMapkey")
+            | mapkey
+      .modal-footer
+        button.btn.btn-primary(type='button', ng-click='goToMap(mapConfig);$hide()') Anzeigen
