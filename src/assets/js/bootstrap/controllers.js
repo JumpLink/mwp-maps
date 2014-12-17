@@ -501,7 +501,8 @@ jumplink.cms.controller('MapController', function($rootScope, $scope, $sailsSock
     $scope.highchartsNgConfig.series.push({
       data: data,
       mapData: Highcharts.maps[mapKey],
-      joinBy: 'hc-key',
+      // joinBy: 'hc-key',
+      joinBy: 'hasc',
       allAreas: true,
       name: 'Random data',
       states: {
@@ -517,10 +518,11 @@ jumplink.cms.controller('MapController', function($rootScope, $scope, $sailsSock
         events: {
           // On click, look for a detailed map
           click: function () {
-            var key = this['hc-key'];
-            console.log("key", this, key);
-            var mapKey = 'countries/' + key.substr(0, 2) + '/' + key + '-all';
-            loadSeries(mapKey);
+            console.log("TODO");
+            // var key = this['hc-key'];
+            // console.log("key", this, key);
+            // var mapKey = 'countries/' + key.substr(0, 2) + '/' + key + '-all';
+            // loadSeries(mapKey);
           }
         }
       }

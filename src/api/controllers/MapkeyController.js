@@ -15,78 +15,78 @@ var level0Mapkeys = [
 ];
 
 var level1Mapkeys = [
-  {
-    mapkey: 'countries/af/af-all', // Afghanistan
-    label: 'Afghanistan',
-    adminlevel: 1,
-    nutslevel: 1,
-  },
-  {
-    mapkey: 'countries/al/al-all', // Albania
-    label: 'Albania',
-    adminlevel: 1,
-    nutslevel: 1,
-  },
-  {
-    mapkey: 'countries/dz/dz-all', // Algeria
-    label: 'Algeria',
-    adminlevel: 1,
-    nutslevel: 1,
-  },
-  {
-    mapkey: 'countries/as/as-all', // American Samoa
-    label: ' American Samoa',
-    adminlevel: 1,
-    nutslevel: 1,
-  },
-  {
-    mapkey: 'countries/ad/ad-all', // Andorra
-    label: 'Andorra',
-    adminlevel: 1,
-    nutslevel: 1,
-  },
-  {
-    mapkey: 'countries/ao/ao-all', // Angola
-    label: 'Angola',
-    adminlevel: 1,
-    nutslevel: 1,
-  },
-  {
-    mapkey: 'countries/ag/ag-all', // Antigua and Barbuda
-    label: 'Antigua and Barbuda',
-    adminlevel: 1,
-    nutslevel: 1,
-  },
-  {
-    mapkey: 'countries/ar/ar-all', // Argentina
-    label: 'Argentina',
-    adminlevel: 1,
-    nutslevel: 1,
-  },
-  {
-    mapkey: 'countries/am/am-all', // Armenia
-    label: 'Armenia',
-    adminlevel: 1,
-    nutslevel: 1,
-  },
-  {
-    mapkey: 'countries/au/au-all', // Australia
-    label: 'Australia',
-    adminlevel: 1,
-    nutslevel: 1,
-  },
-  {
-    mapkey: 'countries/at/at-all', // Austria
-    label: 'Austria',
-    adminlevel: 1,
-    nutslevel: 1,
-  },
-  {
-    mapkey: 'countries/az/az-all', // Azerbaijan
-    label: 'Azerbaijan',
-    adminlevel: 1,
-    nutslevel: 1,
-  },
+  // {
+  //   mapkey: 'countries/af/af-all', // Afghanistan
+  //   label: 'Afghanistan',
+  //   adminlevel: 1,
+  //   nutslevel: 1,
+  // },
+  // {
+  //   mapkey: 'countries/al/al-all', // Albania
+  //   label: 'Albania',
+  //   adminlevel: 1,
+  //   nutslevel: 1,
+  // },
+  // {
+  //   mapkey: 'countries/dz/dz-all', // Algeria
+  //   label: 'Algeria',
+  //   adminlevel: 1,
+  //   nutslevel: 1,
+  // },
+  // {
+  //   mapkey: 'countries/as/as-all', // American Samoa
+  //   label: ' American Samoa',
+  //   adminlevel: 1,
+  //   nutslevel: 1,
+  // },
+  // {
+  //   mapkey: 'countries/ad/ad-all', // Andorra
+  //   label: 'Andorra',
+  //   adminlevel: 1,
+  //   nutslevel: 1,
+  // },
+  // {
+  //   mapkey: 'countries/ao/ao-all', // Angola
+  //   label: 'Angola',
+  //   adminlevel: 1,
+  //   nutslevel: 1,
+  // },
+  // {
+  //   mapkey: 'countries/ag/ag-all', // Antigua and Barbuda
+  //   label: 'Antigua and Barbuda',
+  //   adminlevel: 1,
+  //   nutslevel: 1,
+  // },
+  // {
+  //   mapkey: 'countries/ar/ar-all', // Argentina
+  //   label: 'Argentina',
+  //   adminlevel: 1,
+  //   nutslevel: 1,
+  // },
+  // {
+  //   mapkey: 'countries/am/am-all', // Armenia
+  //   label: 'Armenia',
+  //   adminlevel: 1,
+  //   nutslevel: 1,
+  // },
+  // {
+  //   mapkey: 'countries/au/au-all', // Australia
+  //   label: 'Australia',
+  //   adminlevel: 1,
+  //   nutslevel: 1,
+  // },
+  // {
+  //   mapkey: 'countries/at/at-all', // Austria
+  //   label: 'Austria',
+  //   adminlevel: 1,
+  //   nutslevel: 1,
+  // },
+  // {
+  //   mapkey: 'countries/az/az-all', // Azerbaijan
+  //   label: 'Azerbaijan',
+  //   adminlevel: 1,
+  //   nutslevel: 1,
+  // },
   // ..
 
   // Deutschland mit allen Bundesländern

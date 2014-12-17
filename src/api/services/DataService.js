@@ -87,7 +87,7 @@ var mergeDataDeprecated = function (a, b, exportsOrImports) {
 }
 
 /*
- * trim nutcodes of data.nutscode, data.exports.nutscode.
+ * trim nutscodes of data.nutscode, data.exports.nutscode.
  * result may contain the same code multiple times, so these need to be summed next step.
  */
 var trimDataIterator = function (data, callback) {
@@ -114,103 +114,103 @@ var trimDataIterator = function (data, callback) {
 
 /*
  * Merge data with properties "year" and "value"
- * union: if true unite timeline (union set), otherwise: timeline values
+ * type: if "union" unite export / import data (union set), if "sum" sum up,
  */
-mergeTimeline = function (a, b, union) {
+mergeTimeline = function (a, b, type) {
   if(a.year !== b.year) {
     a.error = "Merge timeline with different years not allowed";
     sails.log.error(a.error, a.year, b.year);
     return a;
   }
-  // union set
-  if(union) {
-    // do nothing
-  // sum up
-  } else {
-    a.value += b.value;
-  }
 
+  switch (type) {
+    case 'union':
+      a.value += b.value;
+    break;
+    case 'sum':
+      a.value += b.value;
+    break;
+  }
 
   return a;
 }
 
 sumTimeline = function (a, b) {
-  return mergeTimeline(a, b, false);
+  return mergeTimeline(a, b, 'sum');
 }
 
 unionTimeline = function (a, b) {
-  return mergeTimeline(a, b, true);
+  return mergeTimeline(a, b, 'union');
 }
 
 /*
- * Merge data with properties "nutscode" and "timeline"
- * union: if true unite export / import data (union set), otherwise: sum up
+ * Merge (union or sun up) data with properties "nutscode", "origins" and "timeline" if the nutscode is the same
+ * type: if "union" unite export / import data (union set), if "sum" sum up, if "amount" ..
  */
-mergeExportOrImport = function (a, b, union) {
-  sails.log.debug("sumExportOrImport", a, b);
+mergeExportOrImport = function (a, b, type) {
+  sails.log.debug("mergeExportOrImport", a, b);
   if(a.nutscode !== b.nutscode) {
-    a.error = "Merge export or import with different nutcodes not allowed";
+    a.error = "Merge export or import with different nutscodes not allowed";
     sails.log.error(a.error, a.nutscode, b.nutscode);
     return a;
   }
 
-  if(a.nutscode === "DE12") {
-    sails.log.warn("sumExportOrImport DE12");
-    sails.log.warn(a);
-    sails.log.warn(b);
-  }
-
-    // union set
-  if(union) {
-    // do nothing, origins are the same on nion set
-  // sum up
-  } else {
-    a.origins = a.origins.concat(b.origins);
-  }
+  // if(a.nutscode === "DE12") {
+  //   sails.log.warn("mergeExportOrImport DE12");
+  //   sails.log.warn(a);
+  //   sails.log.warn(b);
+  // }
 
   a.timeline = a.timeline.concat(b.timeline);
-  // union set: ignore duplicate entries
-  if(union) a.timeline = findDuplicatePropertyDo(a.timeline, 'year', unionTimeline);
-  // sum up: sum up duplicate entries
-  else a.timeline = findDuplicatePropertyDo(a.timeline, 'year', sumTimeline);
 
-  if(a.nutscode === "DE12") {
-    sails.log.warn("RESULT sumExportOrImport DE12");
-    sails.log.warn(a);
+  switch (type) {
+    case 'union':
+      // origins: do nothing, origins are the same on union set
+      a.timeline = findDuplicatePropertyDo(a.timeline, 'year', unionTimeline);
+    break;
+    case 'sum':
+       a.origins = a.origins.concat(b.origins);
+       a.timeline = findDuplicatePropertyDo(a.timeline, 'year', sumTimeline);
+    break;
   }
+
+  // if(a.nutscode === "DE12") {
+  //   sails.log.warn("RESULT mergeExportOrImport DE12");
+  //   sails.log.warn(a);
+  // }
 
   return a;
 }
 
 sumExportOrImport = function (a, b) {
-  return mergeExportOrImport(a, b, false);
+  return mergeExportOrImport(a, b, 'sum');
 }
 
 unionExportOrImport = function (a, b) {
-  return mergeExportOrImport(a, b, true);
+  return mergeExportOrImport(a, b, 'union');
 }
 
 /*
  * Sum data with properties "nutscode", "level", "exports" and "imports"
- * union: if true unite data (union set), otherwise: sum up data
+ * type: if "union" unite export / import data (union set), if "sum" sum up,
  */
-mergeData = function (a, b, union) {
+mergeData = function (a, b, type) {
   if(a.nutscode !== b.nutscode) {
-    a.error = "Merge data with different nutcodes not allowed";
+    a.error = "Merge data with different nutscodes not allowed";
     sails.log.error(a.error);
     return a;
   }
   if(a.level !== b.level) {
-    a.error = "Merge data with levels nutcodes not allowed";
+    a.error = "Merge data with levels nutscodes not allowed";
     sails.log.error(a.error);
     return a;
   }
 
-  if(a.nutscode === "DE30") {
-    sails.log.warn("sumData DE30");
-    sails.log.warn(a);
-    sails.log.warn(b);
-  }
+  // if(a.nutscode === "DE30") {
+  //   sails.log.warn("sumData DE30");
+  //   sails.log.warn(a);
+  //   sails.log.warn(b);
+  // }
 
   // just merge origins if they exists
   if(a.id && !b.id) {
@@ -230,29 +230,32 @@ mergeData = function (a, b, union) {
   if(!a.exports) a.exports = [];
   if(!b.exports) b.exports = [];
   a.exports = a.exports.concat(b.exports);
-  // union set
-  if(union) a.exports = findDuplicatePropertyDo(a.exports, 'nutscode', unionExportOrImport);
-  // sum up
-  else a.exports = findDuplicatePropertyDo(a.exports, 'nutscode', sumExportOrImport);
 
   // IMPORTS
   if(!a.imports) a.imports = [];
   if(!b.imports) b.imports = [];
   a.imports = a.imports.concat(b.imports);
-  // union set
-  if(union) a.imports = findDuplicatePropertyDo(a.imports, 'nutscode', unionExportOrImport)
-  // sum up
-  else a.imports = a.imports = findDuplicatePropertyDo(a.imports, 'nutscode', sumExportOrImport)
+
+  switch (type) {
+    case 'union':
+      a.exports = findDuplicatePropertyDo(a.exports, 'nutscode', unionExportOrImport);
+      a.imports = findDuplicatePropertyDo(a.imports, 'nutscode', unionExportOrImport)
+    break;
+    case 'sum':
+      a.exports = findDuplicatePropertyDo(a.exports, 'nutscode', sumExportOrImport);
+      a.imports = findDuplicatePropertyDo(a.imports, 'nutscode', sumExportOrImport)
+    break;
+  }
 
   return a;
 }
 
 sumData = function (a, b) {
-  return mergeData(a, b, false);
+  return mergeData(a, b, 'sum');
 }
 
 unionData = function (a, b) {
-  return mergeData(a, b, true);
+  return mergeData(a, b, 'union');
 }
 
 /*
@@ -310,6 +313,9 @@ var findAndSaveImports = function (callback) {
   });
 }
 
+/*
+ * Generate nuts2 data from nuts3 data. sum up imports and exports as long as nessesary
+ */
 var generateLevel2 = function (callback) {
   // Find All
   Data.find({level: 3}).exec(function found(err, data) {
@@ -334,6 +340,89 @@ var generateLevel2 = function (callback) {
   });
 }
 
+/*
+ * Insert for imformation for the nuts, e.g. hasc, parents, childs and so on..
+ */
+var insertInfos = function (callback) {
+
+  var updateNut = function (item, callback) {
+    Nuts.find({nutscode: item.nutscode}).exec(function found(err, found) {
+      if (err) return callback(err);
+      if (found instanceof Array) found = found[0];
+      if (!found) {
+        sails.log.warn("not found", item, found)
+        return callback();
+      }
+
+      if (found.hasc) item.hasc = found.hasc;
+      if (found.countrycode) item.countrycode = found.countrycode;
+      if (found.parent) item.parent = found.parent;
+      if (found.childs) item.childs = found.childs;
+
+      Data.update(item.id, item).exec(function updated (err, data) {
+        if (err) return callback(err);
+        if (data instanceof Array) data = data[0];
+        Data.publishUpdate(data.id, data);
+        return callback(null, data);
+      });
+
+    });
+  }
+
+  Data.find({}).exec(function found(err, foundDatas) {
+    if (err) return callback(err);
+    async.map(foundDatas, updateNut, callback);
+  });
+}
+
+/*
+ * Generate new property for each level that represents the amount of all exports/imports for the current nutscode
+ */
+var sumExportImport = function (callback) {
+
+  var sumPorts = function (ports) {
+    // sails.log.debug("sumPorts", ports)
+    var result = {};
+    for (var i = 0; i < ports.length; i++) {
+      var port = ports[i];
+      for (var k = 0; k < port.timeline.length; k++) {
+        var portOnTime = port.timeline[k];
+        if(typeof result[portOnTime.year] === 'undefined') {
+          result[portOnTime.year] = 0;
+        }
+        result[portOnTime.year] += Number(portOnTime.value);
+      };
+    };
+    return result;
+  }
+
+  var updateNut = function (item, callback) {
+
+    // sails.log.debug("updateNut", item.nutscode);
+
+    if(item && item.imports && item.imports instanceof Array && item.imports.length > 0) {
+      item.importamount = sumPorts(item.imports);
+    }
+
+    if(item && item.exports && item.exports instanceof Array && item.exports.length > 0) {
+      item.exportamount = sumPorts(item.exports);
+    }
+
+    Data.update(item.id, item).exec(function updated (err, data) {
+      if (err) return callback(err);
+      if (data instanceof Array) data = data[0];
+      // sails.log.debug("updated", data);
+      Data.publishUpdate(data.id, data);
+      return callback(null, data);
+    });
+  }
+
+  Data.find({}).exec(function found(err, foundDatas) {
+    if (err) return callback(err);
+    async.map(foundDatas, updateNut, callback);
+  });
+}
+
 module.exports = {
   findAndSaveImports:findAndSaveImports,
   generateLevel2: generateLevel2,
@@ -342,5 +431,7 @@ module.exports = {
   sumData: sumData,
   unionData: unionData,
   updateOrCreate: updateOrCreate,
-  updateEach: updateEach
+  updateEach: updateEach,
+  insertInfos: insertInfos,
+  sumExportImport: sumExportImport
 }

@@ -45,6 +45,68 @@ module.exports = {
   }
 
   /*
+   * Generates the sum from nuts3 for nuts2
+   */
+  , generateLevel2: function (req, res, next) {
+    DataService.generateLevel2(function (err, result) {
+      if (err) return res.serverError(err);
+      else return res.json(result);
+    });
+  }
+
+  , insertInfos: function (req, res, next) {
+    DataService.insertInfos(function (err, result) {
+      if (err) return res.serverError(err);
+      else return res.json(result);
+    });
+  }
+
+  , sumExportImport: function (req, res, next) {
+    sails.log.debug("sumExportImport")
+    DataService.sumExportImport(function (err, result) {
+      if (err) return res.serverError(err);
+      else return res.json(result);
+    });
+  }
+
+  // , forHighmap: function (req, res, next) {
+
+  //   var level = req.param('level');
+  //   var year = req.param('year');
+  //   var type = req.param('type'); // importamount | exportamount | imports | exports | ..
+
+  //   var getAmount = function (type, year) {
+
+  //   }
+
+  //   var getData = function (item, type, year) {
+  //     var result = [];
+  //     switch(type) {
+  //       case 'importamount':
+
+  //       break;
+  //       case 'exportamount':
+  //       break;
+  //     }
+  //   }
+
+  //   Data.find({level:level}).exec(function found(err, founds) {
+  //     if (err) return res.serverError(err);
+
+  //     for (var i = 0; i < founds.length; i++) {
+  //       var item = founds[i];
+
+
+  //     };
+
+  //     async.map(founds, iterator, function (err, result) {
+  //       if (err) return res.serverError(err);
+  //       res.json(result);
+  //     })
+  //   });
+  // },
+
+  /*
    * Function to upload a csv with "export_nuts3" "import_nuts3" "year" and "value".
    * After the upload the csv will be parsed, validated, transformed and saved to database.
    */
@@ -186,40 +248,28 @@ module.exports = {
         if (err) return res.serverError(err);
         sails.log.info("destroy all data finish");
         async.map(files, convertFileIterator, function(err, files) {
-          if (err) {
-            sails.log.error(err, files);
-            // process.exit(1);
-            return res.serverError(err);
-          }
+          if (err) return res.serverError(err);
           sails.log.info("convert files finish");
           DataService.findAndSaveImports( function(err, data) {
-            // if (err) return res.serverError(err);
+            if (err) return res.serverError(err);
             sails.log.info("findAndSaveImports finish");
             // DataService.generateLevel2( function (err, data) {
-              if (err) {
-                sails.log.error(err, data);
-                // process.exit(1);
-                return res.serverError(err);
-              }
-              var result = {
-                message: files.length + ' file(s) uploaded successfully!',
-              };
-              // sails.log.debug(result);
-              return res.json(result);
+              if (err) return res.serverError(err);
+              DataService.insertInfos(function (err, result) {
+                if (err) return res.serverError(err);
+                DataService.sumExportImport(function (err, result) {
+                  if (err) return res.serverError(err);
+                  var result = {
+                    message: files.length + ' file(s) uploaded successfully!',
+                  };
+                  // sails.log.debug(result);
+                  return res.json(result);
+                });
+              });
             // });
           });
         });
       });
-    });
-  },
-
-  /*
-   * Generates the sum from nuts3 for nuts2
-   */
-  generateLevel2: function (req, res, next) {
-    DataService.generateLevel2(function (err, result) {
-      if (err) return res.serverError(err);
-      else return res.json(result);
     });
   }
 
