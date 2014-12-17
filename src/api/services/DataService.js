@@ -247,6 +247,14 @@ mergeData = function (a, b, type) {
     break;
   }
 
+  if(a.exports.length === 0) {
+    delete a.exports;
+  }
+
+  if(a.imports.length === 0) {
+    delete a.imports;
+  }
+
   return a;
 }
 
@@ -273,8 +281,23 @@ var updateEach = function (datas, callback) {
   ModelService.updateEach('Data', datas, callback);
 }
 
-var updateOrCreateEach = function (datas, query, callback) {
-  ModelService.updateOrCreateEach('Data', datas, query, callback);
+var updateOrCreateEach = function (datas, propertyName, callback, extendFound) {
+  ModelService.updateOrCreateEach('Data', datas, propertyName, callback, extendFound);
+
+  // if (!datas) {
+  //   return callback('No data provided.');
+  // }
+  // if (!propertyName) {
+  //   return callback('No property name provided.');
+  // }
+
+  // var iterator = function (data, callback) {
+  //   var query = {};
+  //   query[propertyName] = data[propertyName];
+  //   updateOrCreate(modelName, data, query, callback, extendFound)
+  // }
+
+  // async.mapSeries(datas, iterator, callback);
 }
 
 /*
@@ -294,16 +317,12 @@ var findAndSaveImports = function (callback) {
           var newImport = {
             nutscode: foundDatas[i].exports[k].nutscode,            // import source / export target
             level: foundDatas[i].level,
-            exports: foundDatas[i].exports,                         // Do not remove / overwrite exports
+            // exports: foundDatas[i].exports,                         // Do not remove / overwrite exports
             imports: [{
               nutscode: foundDatas[i].nutscode,                     // import target / export source
               timeline: foundDatas[i].exports[k].timeline
             }]
           };
-
-          // if (foundDatas[i].id) {
-          //   newImport.id =
-          // }
 
           var index = indexOfProperty(newImports, 'nutscode', newImport.nutscode);
           if(index === -1) {
@@ -315,7 +334,7 @@ var findAndSaveImports = function (callback) {
         };
       }
     };
-    updateOrCreateEach(newImports, 'nutscode', callback);
+    updateOrCreateEach(newImports, 'nutscode', callback, true);
   });
 }
 

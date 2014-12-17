@@ -414,14 +414,8 @@ jumplink.cms.controller('MapController', function($rootScope, $scope, $sailsSock
     }
   });
 
-  var getGeojson = function(callback) {
+  var getGeojson = function(mapkey, callback) {
     $log.debug("bootstrap-layout.map resolve geojson");
-
-    var mapkey = $stateParams.mapkey1;
-    if($stateParams.mapkey2)
-        mapkey += "/"+$stateParams.mapkey2;
-    if($stateParams.mapkey3)
-        mapkey += "/"+$stateParams.mapkey3;
 
     $log.debug(mapkey);
 
@@ -432,12 +426,12 @@ jumplink.cms.controller('MapController', function($rootScope, $scope, $sailsSock
     });
   }
 
-  var getData = function(callback) {
-    var level = $stateParams.level;
-    var admintype = $stateParams.admintype; // TODO
-    var type = $stateParams.type;
-    var join = $stateParams.join;
-    var year = $stateParams.year;
+  var getData = function(level, admintype, type, join, year, callback) {
+    // var level = $stateParams.level;
+    // var admintype = $stateParams.admintype; // TODO
+    // var type = $stateParams.type;
+    // var join = $stateParams.join;
+    // var year = $stateParams.year;
 
     $log.debug("bootstrap-layout.map resolve data", level, admintype, type, join);
 
@@ -554,7 +548,7 @@ jumplink.cms.controller('MapController', function($rootScope, $scope, $sailsSock
       mapkey += "/"+$stateParams.mapkey3;
 
   getData(level, admintype, type, join, year, function (error, data) {
-    getGeojson(function (error, geojson) {
+    getGeojson(mapkey, function (error, geojson) {
       Highcharts.maps[geojson.mapkey] = geojson;
       loadSeries(data, geojson.mapkey, 'hasc');
     });

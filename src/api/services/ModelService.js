@@ -1,3 +1,5 @@
+var extend = require('node.extend');
+
 // warn this creates each time a new id
 var updateOrCreateResponse = function (modelName, findBy, req, res, next) {
 
@@ -16,7 +18,7 @@ var updateOrCreateResponse = function (modelName, findBy, req, res, next) {
 
 }
 
-var updateOrCreate = function (modelName, data, query, callback) {
+var updateOrCreate = function (modelName, data, query, callback, extendFound) {
   // sails.log.debug("updateOrCreate", modelName, data, id);
   // sails.log.debug("global[modelName]", global[modelName]);
 
@@ -41,6 +43,13 @@ var updateOrCreate = function (modelName, data, query, callback) {
       });
     } else {
       // sails.log.debug("found", found);
+      if(extendFound) {
+        sails.log.error("found", found);
+        sails.log.error("data", data);
+        data = extend(found, data);
+        sails.log.error("extended", data);
+      }
+
       global[modelName].update(found.id, data).exec(function updated (err, data) {
         if (err) return callback(err);
         if (data instanceof Array) data = data[0];
@@ -86,7 +95,7 @@ var updateEach = function (modelName, datas, callback) {
   async.map(datas, iterator, callback);
 }
 
-var updateOrCreateEach = function (modelName, datas, propertyName, callback) {
+var updateOrCreateEach = function (modelName, datas, propertyName, callback, extendFound) {
   if (!modelName) {
     return callback('No model name provided.');
   }
@@ -99,7 +108,7 @@ var updateOrCreateEach = function (modelName, datas, propertyName, callback) {
   var iterator = function (data, callback) {
     var query = {};
     query[propertyName] = data[propertyName];
-    updateOrCreate(modelName, data, query, callback)
+    updateOrCreate(modelName, data, query, callback, extendFound)
   }
   async.mapSeries(datas, iterator, callback);
 }
