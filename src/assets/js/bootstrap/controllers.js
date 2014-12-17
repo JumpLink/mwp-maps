@@ -542,7 +542,18 @@ jumplink.cms.controller('MapController', function($rootScope, $scope, $sailsSock
     });
   }
 
-  getData(function (error, data) {
+  var level = $stateParams.level;
+  var admintype = $stateParams.admintype; // TODO
+  var type = $stateParams.type;
+  var join = $stateParams.join;
+  var year = $stateParams.year;
+  var mapkey = $stateParams.mapkey1;
+  if($stateParams.mapkey2)
+      mapkey += "/"+$stateParams.mapkey2;
+  if($stateParams.mapkey3)
+      mapkey += "/"+$stateParams.mapkey3;
+
+  getData(level, admintype, type, join, year, function (error, data) {
     getGeojson(function (error, geojson) {
       Highcharts.maps[geojson.mapkey] = geojson;
       loadSeries(data, geojson.mapkey, 'hasc');

@@ -10,7 +10,9 @@
             th nutscode
             th level
             th exports
+            th export amount
             th imports
+            th import amount
         tbody
           tr(ng-repeat="dat in data")
             td {{dat.nutscode}}
@@ -35,6 +37,17 @@
                           tr(ng-repeat="time in export.timeline")
                             td {{time.year}}
                             td {{time.value}}
+            //- exportamount
+            td
+              table.table.table-hover.table-condensed(ng-show="dat.exportamount")
+                thead
+                  tr
+                    th year
+                    th value
+                tbody
+                  tr(ng-repeat="(year, value) in dat.exportamount")
+                    td {{year}}
+                    td {{value}}
             //- imports
             td
               table.table.table-hover.table-condensed(ng-show="dat.imports")
@@ -55,3 +68,14 @@
                           tr(ng-repeat="time in import.timeline")
                             td {{time.year}}
                             td {{time.value}}
+            //- importamount
+            td
+              table.table.table-hover.table-condensed(ng-show="dat.importamount")
+                thead
+                  tr
+                    th year
+                    th value
+                tbody
+                  tr(ng-repeat="(year, value) in dat.importamount")
+                    td {{year}}
+                    td {{value}}

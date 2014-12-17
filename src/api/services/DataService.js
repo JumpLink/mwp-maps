@@ -292,13 +292,19 @@ var findAndSaveImports = function (callback) {
         for (var k = 0; k < foundDatas[i].exports.length; k++) {
           // sails.log.debug("foundDatas["+i+"].exports["+k+"]", foundDatas[i].exports[k]);
           var newImport = {
-            nutscode: foundDatas[i].exports[k].nutscode,           // import source / export target
+            nutscode: foundDatas[i].exports[k].nutscode,            // import source / export target
             level: foundDatas[i].level,
+            exports: foundDatas[i].exports,                         // Do not remove / overwrite exports
             imports: [{
-              nutscode: foundDatas[i].nutscode,                    // import target / export source
+              nutscode: foundDatas[i].nutscode,                     // import target / export source
               timeline: foundDatas[i].exports[k].timeline
             }]
           };
+
+          // if (foundDatas[i].id) {
+          //   newImport.id =
+          // }
+
           var index = indexOfProperty(newImports, 'nutscode', newImport.nutscode);
           if(index === -1) {
             newImports.push(newImport);
@@ -391,6 +397,7 @@ var sumExportImport = function (callback) {
           result[portOnTime.year] = 0;
         }
         result[portOnTime.year] += Number(portOnTime.value);
+        result[portOnTime.year] = Number(parseFloat(result[portOnTime.year]).toFixed(2)); // Round to at most 2 decimal places
       };
     };
     return result;
