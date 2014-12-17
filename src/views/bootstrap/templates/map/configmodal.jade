@@ -9,7 +9,7 @@
           label(for="level") Nutslevel
           input.form-control#level(type="number", name="level", placeholder="Level eingeben", ng-model="mapConfig.level")
         .form-group
-          label(for="mapkey") Karte
+          label(for="mapkey") Map
           br
           button.btn.btn-primary#mapkey(ng-if="mapConfig.level == 0", ng-disabled="!mapConfig.mapkeys.nutslevel0.length", type="button", name="mapkey", data-placeholder="Wähle eine Nutslevel {{mapConfig.level}} Karte", ng-options="mapkey.mapkey as mapkey.label for mapkey in mapConfig.mapkeys.nutslevel0", data-template="bootstrap/select", bs-select, ng-model="mapConfig.selectedMapkey")
             | mapkey
@@ -19,5 +19,19 @@
             | mapkey
           button.btn.btn-primary#mapkey(ng-if="mapConfig.level == 3", ng-disabled="!mapConfig.mapkeys.nutslevel3.length" type="button", name="mapkey", data-placeholder="Wähle eine Nutslevel {{mapConfig.level}} Karte" ng-options="mapkey.mapkey as mapkey.label for mapkey in mapConfig.mapkeys.nutslevel3", data-template="bootstrap/select", bs-select, ng-model="mapConfig.selectedMapkey")
             | mapkey
+        .form-group
+          label(for="admintype") Admin Type
+          input.form-control#admintype(type="text", name="admintype", placeholder="Admin Type eingeben", ng-model="mapConfig.admintype")
+        .form-group
+          label(for="join") Join By
+          input.form-control#join(type="text", name="join", placeholder="Join By eingeben", ng-model="mapConfig.join")
+        .form-group
+          label(for="type") Type
+          br
+          //- input.form-control#type(type="text", name="type", placeholder="Type eingeben", ng-model="mapConfig.type")
+          button.btn.btn-primary#type(type="button", name="type", data-placeholder="Choose a type" ng-options="type.value as type.label for type in [{'value':'importamount', 'label':'import amount'},{'value':'exportamount', 'label':'export amount'}]", data-template="bootstrap/select", bs-select, ng-model="mapConfig.selectedType")
+        .form-group
+          label(for="year") Year
+          input.form-control#year(type="text", name="year", placeholder="Year eingeben", ng-model="mapConfig.year")
       .modal-footer
         button.btn.btn-primary(type='button', ng-click='goToMap(mapConfig);$hide()') Anzeigen

@@ -197,7 +197,11 @@ jumplink.cms.controller('ToolbarController', function($scope, $modal, $sailsSock
     admintype: 'nuts',
     level: 1,
     mapkeys: mapkeys,
-    selectedMapkey: null
+    admintype: 'nuts',
+    join: 'hasc',
+    selectedType: 'exportamount',
+    year: '2010',
+    selectedMapkey: 'countries/de/de-all'
   }
 
   $sailsSocket.post('/mapkey/findByLevel', {nutslevel:0}).then (function (data) {
@@ -234,7 +238,11 @@ jumplink.cms.controller('ToolbarController', function($scope, $modal, $sailsSock
       admintype: mapConfig.admintype,
       mapkey1: mapkeyParts[0],
       mapkey2: mapkeyParts[1],
-      mapkey3: mapkeyParts[2]
+      mapkey3: mapkeyParts[2],
+      admintype: mapConfig.admintype,
+      join: mapConfig.join,
+      type: mapConfig.selectedType,
+      year: mapConfig.year,
     }
 
     $log.debug("goToMap", mapConfig, params);
@@ -426,10 +434,10 @@ jumplink.cms.controller('MapController', function($rootScope, $scope, $sailsSock
 
   var getData = function(callback) {
     var level = $stateParams.level;
-    var admintype = $stateParams.admintype; // nuts TODO
-    var type = 'exportamount'; // TODO
-    var join = 'hasc'; // TODO
-    var year = "2010"; //TODO
+    var admintype = $stateParams.admintype; // TODO
+    var type = $stateParams.type;
+    var join = $stateParams.join;
+    var year = $stateParams.year;
 
     $log.debug("bootstrap-layout.map resolve data", level, admintype, type, join);
 

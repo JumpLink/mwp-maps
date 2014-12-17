@@ -64,7 +64,7 @@ jumplink.cms.config( function($stateProvider, $urlRouterProvider, $locationProvi
   })
   // map
   .state('bootstrap-layout.map', {
-    url: '/map/:level/:admintype/:mapkey1/:mapkey2/:mapkey3'
+    url: '/map/:level/:admintype/:mapkey1/:mapkey2/:mapkey3/:join/:type/:year'
     // NOT WORKING
     // , resolve: {
 
