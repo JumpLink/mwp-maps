@@ -69,42 +69,60 @@ module.exports = {
     });
   }
 
-  // , forHighmap: function (req, res, next) {
+  /*
+   * http://localhost:1338/data/forHighmap?level=1&year=2010&type=importamount&join=hasc
+   */
+  , forHighmap: function (req, res, next) {
 
-  //   var level = req.param('level');
-  //   var year = req.param('year');
-  //   var type = req.param('type'); // importamount | exportamount | imports | exports | ..
+    var level = Number(req.param('level'));
+    var year = req.param('year');
+    var type = req.param('type'); // importamount | exportamount | imports | exports | ..
+    var joinBy = req.param('join'); // hasc
 
-  //   var getAmount = function (type, year) {
+    var getAmount = function (item, type, year) {
+      var amount;
+      switch(type) {
+        case 'importamount':
+          amount = item.importamount;
+        break
+        case 'exportamount':
+          amount = item.exportamount;
+        break;
+      }
 
-  //   }
+      if(typeof amount !== 'undefined' && typeof amount[year] !== 'undefined') {
+        return amount[year]
+      } else {
+        return 0;
+      }
+    }
 
-  //   var getData = function (item, type, year) {
-  //     var result = [];
-  //     switch(type) {
-  //       case 'importamount':
+    var getData = function (item, type, year) {
+      switch(type) {
+        case 'importamount':
+        case 'exportamount':
+          item.value = getAmount(item, type, year);
+        break;
+      }
+      return item;
+    }
 
-  //       break;
-  //       case 'exportamount':
-  //       break;
-  //     }
-  //   }
+    Data.find({level:level}).exec(function found(err, founds) {
+      if (err) return res.serverError(err);
+      var result = [];
 
-  //   Data.find({level:level}).exec(function found(err, founds) {
-  //     if (err) return res.serverError(err);
+      for (var i = 0; i < founds.length; i++) {
+        founds[i] = getData(founds[i], type, year);
+        var tmp = {};
+        tmp[joinBy] = founds[i][joinBy];
+        tmp.value = founds[i].value;
+        result.push(tmp);
+      };
 
-  //     for (var i = 0; i < founds.length; i++) {
-  //       var item = founds[i];
+      return res.json(result);
 
-
-  //     };
-
-  //     async.map(founds, iterator, function (err, result) {
-  //       if (err) return res.serverError(err);
-  //       res.json(result);
-  //     })
-  //   });
-  // },
+    });
+  }
 
   /*
    * Function to upload a csv with "export_nuts3" "import_nuts3" "year" and "value".

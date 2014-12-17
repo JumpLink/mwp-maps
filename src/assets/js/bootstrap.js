@@ -60,47 +60,45 @@ jumplink.cms.config( function($stateProvider, $urlRouterProvider, $locationProvi
         templateUrl: 'bootstrap/toolbar'
         , controller: 'ToolbarController'
       }
-      // , 'footer' : {
-      //   templateUrl: 'bootstrap/footer'
-      //   , controller: 'FooterController'
-      // }
     }
   })
   // map
   .state('bootstrap-layout.map', {
     url: '/map/:level/:admintype/:mapkey1/:mapkey2/:mapkey3'
-    , resolve: {
+    // NOT WORKING
+    // , resolve: {
 
-      data: function($sailsSocket, $stateParams, $log) {
-        var level = $stateParams.level;
-        var admintype = $stateParams.admintype; // nuts TODO
+    //   data: function($sailsSocket, $stateParams, $log) {
+    //     var level = $stateParams.level;
+    //     var admintype = $stateParams.admintype; // nuts TODO
+    //     var type = 'exportamount'; // TODO
+    //     var join = 'hasc'; // TODO
 
-        $log.debug("bootstrap-layout.map resolve data", level, admintype);
+    //     $log.debug("bootstrap-layout.map resolve data", level, admintype, type, join);
 
-        return $sailsSocket.post('/data/findByLevel', {level:level}).then (function (data) {
-          $log.debug(data);
-          return data.data;
-        });
-      }
+    //     return $sailsSocket.post('/data/forhighmap', {level:level, year:year, type:type, join:join}).then (function (data) {
+    //       console.log("/data/forhighmap", data);
+    //       return data.data;
+    //     });
+    //   }
 
-      // , geojson: function($stateParams, $log) {
-      //   $log.debug("bootstrap-layout.map resolve geojson");
+    //   , geojson: function($stateParams, $log) {
+    //     $log.debug("bootstrap-layout.map resolve geojson");
 
-      //   var mapkey = $stateParams.mapkey1;
-      //   if($stateParams.mapkey2)
-      //       mapkey += "/"+$stateParams.mapkey2;
-      //   if($stateParams.mapkey3)
-      //       mapkey += "/"+$stateParams.mapkey3;
+    //     var mapkey = $stateParams.mapkey1;
+    //     if($stateParams.mapkey2)
+    //         mapkey += "/"+$stateParams.mapkey2;
+    //     if($stateParams.mapkey3)
+    //         mapkey += "/"+$stateParams.mapkey3;
 
-      //   $log.debug(mapkey);
+    //     $log.debug("mapkey", mapkey);
 
-      //   return $sailsSocket.post('/geojson/findByMapkey', {mapkey:mapkey}).then (function (data) {
-      //     $log.debug('/geojson/findByMapkey', data);
-      //     return data.data;
-      //   });
-      // }
-
-    }
+    //     return $sailsSocket.post('/geojson/findByMapkey', {mapkey:mapkey}).then (function (data) {
+    //       console.log('/geojson/findByMapkey', data);
+    //       return data.data;
+    //     });
+    //   }
+    // }
     , views: {
       'content' : {
         templateUrl: 'bootstrap/map/content'

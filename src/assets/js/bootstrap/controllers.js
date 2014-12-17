@@ -375,7 +375,8 @@ jumplink.cms.controller('HomeContentController', function($scope, $rootScope, $s
 });
 
 
-jumplink.cms.controller('MapController', function($rootScope, $scope, $sailsSocket, $stateParams, $log, angularLoad, toolbarService, FileUploader, data) {
+jumplink.cms.controller('MapController', function($rootScope, $scope, $sailsSocket, $stateParams, $log, toolbarService) {
+
   toolbarService.prepearView('map');
 
   $sailsSocket.subscribe('map', function(msg){
@@ -418,24 +419,28 @@ jumplink.cms.controller('MapController', function($rootScope, $scope, $sailsSock
 
     $sailsSocket.post('/geojson/findByMapkey', {mapkey:mapkey}).then (function (data) {
       $log.debug('/geojson/findByMapkey', data);
+      // TODO error handling
       callback(null, data.data[0]);
     });
   }
 
-  $log.debug($stateParams);
-  // Prepare demo data
-  // var data = [{
-  //   'hc-key': 'de',
-  //   value: 3
-  // }, {
-  //   'hc-key': 'fr',
-  //   value: 5
-  // }, {
-  //   'hc-key': 'nl',
-  //   value: 20
-  // }];
+  var getData = function(callback) {
+    var level = $stateParams.level;
+    var admintype = $stateParams.admintype; // nuts TODO
+    var type = 'exportamount'; // TODO
+    var join = 'hasc'; // TODO
+    var year = "2010"; //TODO
 
-  var data = data;
+    $log.debug("bootstrap-layout.map resolve data", level, admintype, type, join);
+
+    $sailsSocket.post('/data/forhighmap', {level:level, year:year, type:type, join:join}).then (function (data) {
+      $log.debug("/data/forhighmap", data);
+      // TODO error handling
+      callback(null, data.data)
+    });
+  }
+
+  $log.debug($stateParams);
 
   var mapOptions = {
     mapNavigation: {
@@ -468,7 +473,7 @@ jumplink.cms.controller('MapController', function($rootScope, $scope, $sailsSock
     series: [],
     //Title configuration (optional)
     title: {
-      text: 'Test'
+      text: ''
     },
     //Boolean to control showng loading status on chart (optional)
     loading: false,
@@ -495,14 +500,14 @@ jumplink.cms.controller('MapController', function($rootScope, $scope, $sailsSock
 
   };
 
-  var loadSeries = function (mapKey, nutLevel) {
+  var loadSeries = function (data, mapKey, joinBy) {
     $scope.highchartsNgConfig.series = [];
 
     $scope.highchartsNgConfig.series.push({
       data: data,
       mapData: Highcharts.maps[mapKey],
       // joinBy: 'hc-key',
-      joinBy: 'hasc',
+      joinBy: joinBy,
       allAreas: true,
       name: 'Random data',
       states: {
@@ -529,11 +534,13 @@ jumplink.cms.controller('MapController', function($rootScope, $scope, $sailsSock
     });
   }
 
-
-  getGeojson(function (error, geojson) {
-    Highcharts.maps[geojson.mapkey] = geojson;
-    loadSeries(geojson.mapkey);
+  getData(function (error, data) {
+    getGeojson(function (error, geojson) {
+      Highcharts.maps[geojson.mapkey] = geojson;
+      loadSeries(data, geojson.mapkey, 'hasc');
+    });
   });
+
 
 
   $scope.slider = {from:0, to:100, single: 50};
