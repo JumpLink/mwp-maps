@@ -43,7 +43,8 @@
     "highmaps-release": "1.0.*",
     "highcharts-release": "4.0.*",
     "angular-load": "0.2.*",
-    "highcharts-ng": "hanneskaeufler/highcharts-ng#hk-highmaps"
+    "highcharts-ng": "hanneskaeufler/highcharts-ng#hk-highmaps",
+    "socket.io-client": "~1.2.1"
   },
   "resolutions": {
     "angular": "1.2.26",
